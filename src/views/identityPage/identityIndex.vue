@@ -14,14 +14,15 @@
       <el-form
         ref="form"
         :model="form"
+        :rules="rules"
         size="medium"
         label-width="100px"
         class="form"
       >
-        <el-form-item label="真实姓名">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="真实姓名" prop="realName">
+          <el-input v-model="form.realName"></el-input>
         </el-form-item>
-        <el-form-item label="身份证号码">
+        <el-form-item label="身份证号码" prop="idCard">
           <el-input v-model="form.idCard"></el-input>
         </el-form-item>
         <el-form-item>
@@ -38,29 +39,33 @@
         ref="form"
         :model="form"
         size="medium"
+        :rules="rules"
         label-width="120px"
         class="form"
       >
-        <el-form-item label="目前所在地区">
+        <el-form-item label="目前所在地区" prop="area">
           <v-distpicker
-            :province="form.addressprovince"
-            :city="form.addresscity"
-            :area="form.address__dist"
+            :province="addressprovince"
+            :city="addresscity"
+            :area="addressdist"
             @selected="onSelected"
           ></v-distpicker>
         </el-form-item>
-        <el-form-item label="所在公司/学校">
-          <el-select v-model="form.region" placeholder="请选择公司/学校">
-            <el-option label="宁波财经学院" value="shanghai"></el-option>
-            <el-option label="浙江万里学院" value="beijing"></el-option>
-            <el-option label="宁波大学" value="qq"></el-option>
+        <el-form-item label="所在公司/学校" prop="unit">
+          <el-select v-model="form.unitId" placeholder="请选择公司/学校" filterable :filter-method="dataFilter">
+            <el-option 
+            v-for="item in options"
+            :key="item.uuid"
+            :label="item.unitName"
+            :value="item.uuid">
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="工号/学号">
-          <el-input v-model="form.idcard"></el-input>
+        <el-form-item label="工号/学号" prop="number">
+          <el-input v-model="form.number"></el-input>
         </el-form-item>
-        <el-form-item label="电子邮箱">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="电子邮箱" prop="email">
+          <el-input v-model="form.email"></el-input>
         </el-form-item>
         <el-form-item>
           <div class="btn">
@@ -83,44 +88,116 @@
   </div>
 </template>
 <script>
+import loginApi from "../../api/login";
 export default {
   data() {
     return {
       active: 0,
       userType: null,
+      options: "",
+      optionsCopy:"",
+      addressprovince: "",
+      addresscity: "",
+      addressdist: "",
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
+        realName: "",
+        idCard: "",
+        address: "",
+        unitId: "",
+        number: "",
+        email:""
+      },
+      // 表单验证，需要在 el-form-item 元素中增加 prop 属性
+      rules: {
+        realName: [
+          { required: true, message: "请输入真实姓名", trigger: "blur" },
+        ],
+        idCard: [
+          { required: true, message: "请输入身份证号", trigger: "blur" },
+        ],
+        area: [
+          { required: true, message: "请选择所在地区", trigger: "blur" },
+        ],
+        unit: [
+          { required: true, message: "请选择所在单位", trigger: "blur" },
+        ],
+        number: [
+          { required: true, message: "请输入学号/工号", trigger: "blur" },
+        ],
+        email: [
+          { required: true, message: "请输入邮箱", trigger: "blur" },
+        ]
       },
     };
+  },
+  created() {
+    this.getUnitList();
   },
   mounted() {
     this.userType = this.$route.query.userType;
   },
   methods: {
     onSelected(data) {
-      this.form.addressprovince = data.province.value;
-      this.form.addresscity = data.city.value;
-      this.form.addressdist = data.area.value;
+      this.addressprovince = data.province.value;
+      this.addresscity = data.city.value;
+      this.addressdist = data.area.value;
+      this.form.address = this.addressprovince + this.addresscity + this.addressdist;
     },
     cancle() {
       this.form = {};
     },
     next1() {
-      this.active = 1;
+       if (this.form.realName === "") {
+        this.$message.warning("真实姓名不能为空");
+      } else if (this.form.idCard === "") {
+        this.$message.warning("身份证号不能为空");
+      }else{
+        this.active = 1;
+      }
     },
     nextUp() {
       this.active = 0;
     },
     next2() {
-      this.active = 2;
+      // debugger
+       if (this.form.addressprovince === "" && this.form.addresscity === "" && this.form.addressdist === "") {
+        this.$message.warning("所在地不能为空");
+      } else if (this.form.unitId === "") {
+        this.$message.warning("单位不能为空");
+      } else if (this.form.number === "") {
+        this.$message.warning("学号/工号不能为空");
+      } else if (this.form.email === "") {
+        this.$message.warning("邮箱不能为空");
+      } else{
+        loginApi.identify(this.form).then(response =>{
+          if(response.code == 20000){
+            this.active = 2;
+            this.$router.push({ name: "index" });
+          }else{
+            this.$message.warning(response.message);
+          }
+        })
+      }
     },
+    getUnitList(){
+      loginApi.getUnitList().then(response =>{
+        console.log(response.data.unitList)
+        this.options = response.data.unitList
+        this.optionsCopy = response.data.unitList
+      })
+    },
+    dataFilter(val) {
+        this.value = val;
+        if (val) { //val存在
+          this.options = this.optionsCopy.filter((item) => {
+            if (!!~item.unitName.indexOf(val) || !!~item.unitName.toUpperCase().indexOf(val.toUpperCase())) {
+              return true
+            }
+          })
+        } else { //val为空时，还原数组
+          this.options = this.optionsCopy;
+        }
+      }
   },
 };
 </script>

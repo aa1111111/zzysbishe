@@ -33,9 +33,9 @@
           <el-input v-model="form.idcard"></el-input>
         </el-form-item>
 
-        <el-form-item label="申请内容">
+        <!-- <el-form-item label="申请内容">
           <el-input v-model="form.goout"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="申请时间">
           <el-date-picker
             type="date"

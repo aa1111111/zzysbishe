@@ -8,7 +8,7 @@
         <h1>
           <p>欢迎登录</p>
           |
-          <p @click="signUp">注册</p>
+          <p @click="signUp" class="resigter">注册</p>
         </h1>
         <el-form
           ref="loginFrom"
@@ -22,8 +22,9 @@
               <img src="../../assets/public_images/renwu.png" alt="" />
               <el-input
                 type="text"
+                prop="userName"
                 placeholder="Username"
-                v-model="form.username"
+                v-model="form.userName"
                 @keypress.enter.native="onSubmit('loginForm')"
               />
             </li>
@@ -31,6 +32,7 @@
               <img src="../../assets/public_images/mima.png" alt="" />
               <el-input
                 type="password"
+                prop="password"
                 placeholder="Password"
                 v-model="form.password"
                 @keypress.enter.native="onSubmit('loginForm')"
@@ -39,12 +41,12 @@
             <li>
               <img src="../../assets/public_images/yanzhengma.png" alt="" />
               <el-form-item
-                prop="inputCode"
+                prop="checkCode"
                 style="text-align: left"
                 class="login-smscode-item"
               >
                 <el-input
-                  v-model.trim="form.inputCode"
+                  v-model.trim="form.checkCode"
                   class="login-smscode-input"
                   placeholder="Verification code"
                   @keypress.enter.native="onSubmit('loginForm')"
@@ -63,7 +65,7 @@
             </li>
             <li class="dx">
               <img src="../../assets/public_images/manager.jpg" alt="" />
-              <el-radio-group v-model="userType">
+              <el-radio-group v-model="form.roleType" prop="roleType">
               <el-radio class="radio" label="1"
                 >用户 </el-radio
               >
@@ -89,6 +91,7 @@
 </template>
 <script>
 import SIdentify from "@/components/SIdentify/SIdentify";
+import loginApi from "../../api/login";
 export default {
   name: "Login",
   components: { SIdentify },
@@ -104,23 +107,29 @@ export default {
       }
     };
     return {
-      userType: "0",
+      roleType: "0",
       identifyCode:'1234',
+      identifyCodes:'1234567890abcdefjhijklinopqrsduvwxyz',
+      userInfo:"",
       form: {
-        username: "",
+        userName: "",
         password: "",
-        inputCode: "",
+        checkCode: "",
+        roleType:""
       },
       // 表单验证，需要在 el-form-item 元素中增加 prop 属性
       rules: {
-        username: [
+        userName: [
           { required: true, message: "账号不可为空", trigger: "blur" },
         ],
         password: [
           { required: true, message: "密码不可为空", trigger: "blur" },
         ],
-        inputCode: [
+        checkCode: [
           { required: true, validator: validateInputCode, trigger: "blur" },
+        ],
+        roleType:[
+          { required: true, message: '请选择用户角色', trigger: 'change' }
         ],
       },
       loading: false,
@@ -136,54 +145,64 @@ export default {
     },
   },
   created() {
-    this.userType = null
+    this.roleType = null
   },
-  mounted() {},
+  mounted() {
+    this.identifyCode = "";
+    this.makeCode(this.identifyCodes, 4);
+  },
   methods: {
     signUp() {
       this.$router.push({ name: "signUp" });
     },
     onSubmit(formName) {
-      debugger
-      this.$router.push({ path: "index", query: { userType: this.userType } });
-      if (this.form.username === "") {
+      // debugger
+      // this.$router.push({ path: "index", query: { roleType: this.roleType } });
+      if (this.form.userName === "") {
         this.$message.warning("请输入账号");
       } else if (this.form.password === "") {
         this.$message.warning("请输入密码");
-      } else if (this.form.inputCode === "") {
+      } else if (this.form.roleType === "") {
+        this.$message.warning("请选择用户角色");
+      } else if (this.form.checkCode === "") {
         this.$message.warning("请输入验证码");
-      } else if (
-        this.form.inputCode.toLowerCase() !== this.identifyCode.toLowerCase()
-      ) {
+      } else if ( this.form.checkCode.toLowerCase() !== this.identifyCode.toLowerCase()) 
+      {
         this.$message.warning("验证码有误!");
         this.refreshCode();
       } else {
         // 为表单绑定验证功能
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.loading = true;
-            this.$store
-              .dispatch("user/login", {
-                username: this.form.username,
-                password: this.form.password,
-              })
-              .then(() => {
-                this.$router.push({ path: this.redirect || "/" });
-                this.loading = false;
-              })
-              .catch(() => {
-                this.loading = false;
-              });
-          } else {
-            this.$message.warning("信息填写有误!");
-            this.refreshCode();
-            return false;
-          }
-        });
+        // debugger
+        console.log(this.form);
+        loginApi.userLogin(this.form).then(response => {
+        //  debugger
+        console.log(response.data.userInfo);
+        this.userInfo = response.data.userInfo;
+        if(response.code == "20000"){
+          this.$router.push({ path: "index", query: { userType: this.form.roleType} });
+        }else{
+          this.$message({
+                type:"warning",
+                message: response.message
+            })
+        }
+       })
       }
     },
     randomNum(min, max) {
       return Math.floor(Math.random() * (max - min) + min);
+    },
+    refreshCode() {
+      this.identifyCode = "";
+      this.makeCode(this.identifyCodes, 4);
+    },
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ];
+      }
+      console.log(this.identifyCode);
     },
   },
 };
@@ -379,5 +398,8 @@ select:-webkit-autofill {
   .login-box {
     padding-bottom: 50px;
   }
+}
+.resigter{
+  cursor: pointer;
 }
 </style>

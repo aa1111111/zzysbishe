@@ -122,15 +122,21 @@
   <div class="block">
   <el-pagination
     layout="prev, pager, next"
-    :total="50">
+    :current-page="currentPage"
+    :page-size="pageSize"
+    :total=total>
   </el-pagination>
 </div>
   </div>
 </template>
 <script>
+import userDailyApi from "../../api/userDaily";
 export default {
   data() {
   return {
+      pageSize:1,
+      currentPage:10,
+      total:0,
       tableData: [
         {
           clockTime: "2021-09-27 11:13:33",
@@ -214,6 +220,9 @@ export default {
       ],
     };
   },
+  created() {
+    this.getHealthyRecordList();
+  },
   methods: {
      addEmpType() {
       this.$router.push({ path: 'userDailyIndex', query: { userType: this.userType} })
@@ -242,6 +251,15 @@ export default {
     deleteEmpType() {
       console.log(2)
     },
+    getHealthyRecordList(){
+      userDailyApi.getHealthyRecordList(this.pageSize,this.currentPage).then( response =>{
+        if(response.code == 20000){
+          
+        }else{
+          this.$message.warning(response.message);
+        }
+      })
+    }
   },
 };
 </script>

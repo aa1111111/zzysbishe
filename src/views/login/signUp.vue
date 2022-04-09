@@ -20,6 +20,7 @@
               <el-input
               class="input"
                 type="text"
+                prop="phone"
                 placeholder="Phone"
                 v-model="form.phone"
                 @keypress.enter.native="onSubmit('loginForm')"
@@ -30,8 +31,9 @@
               <el-input
               class="input"
                 type="text"
+                prop="userName"
                 placeholder="Username"
-                v-model="form.username"
+                v-model="form.userName"
                 @keypress.enter.native="onSubmit('loginForm')"
               />
             </li>
@@ -39,6 +41,7 @@
               <div class="zi">Password</div>
               <el-input
               class="input"
+              prop="password"
                 type="password"
                 placeholder="Password"
                 v-model="form.password"
@@ -49,8 +52,9 @@
               <el-input
               class="input"
                 type="password"
+                prop="repeatPassword"
                 placeholder="Password"
-                v-model="form.Repeatpassword"
+                v-model="form.repeatPassword"
                 @keypress.enter.native="onSubmit('loginForm')"
               />
             </li>
@@ -72,36 +76,42 @@
 </template>
 <script>
 import SIdentify from "@/components/SIdentify/SIdentify";
+import registerApi from "../../api/register";
 export default {
   name: "Login",
   components: { SIdentify },
   data() {
-    var validateInputCode = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入验证码"));
-      } else {
-        if (value.toLowerCase() !== this.identifyCode.toLowerCase()) {
-          callback(new Error("验证码有误!"));
-        }
-        callback();
-      }
-    };
+    // var validateInputCode = (rule, value, callback) => {
+    //   if (value === "") {
+    //     callback(new Error("请输入验证码"));
+    //   } else {
+    //     if (value.toLowerCase() !== this.identifyCode.toLowerCase()) {
+    //       callback(new Error("验证码有误!"));
+    //     }
+    //     callback();
+    //   }
+    // };
     return {
       form: {
-        username: "",
+        phone:"",
+        userName: "",
         password: "",
-        inputCode: "",
+        repeatPassword: "",
+        roleType:"1"
       },
       // 表单验证，需要在 el-form-item 元素中增加 prop 属性
       rules: {
-        username: [
+        phone: [
+          { required: true, message: "手机号不可为空", trigger: "blur" },
+        ],
+        userName: [
           { required: true, message: "账号不可为空", trigger: "blur" },
         ],
         password: [
           { required: true, message: "密码不可为空", trigger: "blur" },
         ],
-        inputCode: [
-          { required: true, validator: validateInputCode, trigger: "blur" },
+        repeatPassword: [
+          { required: true, message: "请再输入一次密码", trigger: "blur" },
         ],
       },
       loading: false,
@@ -123,34 +133,31 @@ export default {
       this.$router.push({ name: "login" });
     },
     onSubmit(formName) {
-      this.$router.push({ name: "login" });
-      if (this.form.username === "") {
-        this.$message.warning("请输入账号");
+      // debugger
+      // this.$router.push({ name: "login" });
+       if (this.form.phone === "") {
+        this.$message.warning("请输入手机号");
+      } else if (this.form.userName === "") {
+        this.$message.warning("请输入用户名");
       } else if (this.form.password === "") {
         this.$message.warning("请输入密码");
+      } else if (this.form.repeatPassword === "") {
+        this.$message.warning("请再输入一遍密码");
+      } else if (this.form.repeatPassword !== this.form.password) {
+        this.$message.warning("两次密码输入不一致");
       } else {
-        // 为表单绑定验证功能
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.loading = true;
-            this.$store
-              .dispatch("user/login", {
-                username: this.form.username,
-                password: this.form.password,
-              })
-              .then(() => {
-                this.$router.push({ path: this.redirect || "/" });
-                this.loading = false;
-              })
-              .catch(() => {
-                this.loading = false;
-              });
-          } else {
-            this.$message.warning("信息填写有误!");
-            this.refreshCode();
-            return false;
+        console.log(this.form);
+        registerApi.register(this.form).then(response => {
+        //  debugger
+        if(response.code == "20000"){
+            this.$message({
+                type: 'success',
+                message: "注册成功"
+            })
+            //跳转登录页面
+            this.$router.push({ name: "login" });
           }
-        });
+       })
       }
     },
     randomNum(min, max) {

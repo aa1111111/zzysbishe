@@ -8,7 +8,10 @@ const fetch = (method = 'GET', url, param = '') => {
       method: method,
       url: url,
       changeOrigin: true,
-      data: JSON.stringify(param)
+      data: JSON.stringify(param),
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
     }).then((res) => {
       resolve(res.data)
     }, error => {

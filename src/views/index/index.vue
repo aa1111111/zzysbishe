@@ -35,6 +35,7 @@ export default {
   },
   mounted() {
     this.userType = this.$route.query.userType;
+    console.log(this.userType)
   },
 };
 </script>

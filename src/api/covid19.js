@@ -15,5 +15,5 @@ export default {
   getDailyList() {
     let url = `/api/covid-19/list?t=${Math.random()}`
     return request.get(url)
-  }
+  },
 }
