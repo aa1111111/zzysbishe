@@ -80,15 +80,15 @@
       <el-table-column type="index" width="70" label="序号" fixed align="center">
       </el-table-column>
       
-      <el-table-column prop="patName" label="姓名" width="100" fixed align="center"> </el-table-column>
-      <el-table-column prop="clockTime" label="打卡时间" width="190" fixed align="center">
+      <el-table-column prop="userName" label="姓名" width="100" fixed align="center"> </el-table-column>
+      <el-table-column prop="recordTime" label="打卡时间" width="190" fixed align="center">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">{{ scope.row.clockTime }}</span>
+          <span style="margin-left: 10px">{{ scope.row.recordTime }}</span>
         </template>
       </el-table-column>
       
-      <el-table-column prop="patAddress" label="目前所在地" fixed align="center"> </el-table-column>
+      <el-table-column prop="currentLocation" label="目前所在地" fixed align="center"> </el-table-column>
        <el-table-column
         prop="tag"
         label="是否打卡"
@@ -138,71 +138,71 @@ export default {
       currentPage:10,
       total:0,
       tableData: [
-        {
-          clockTime: "2021-09-27 11:13:33",
-          patTemperature:'36.5',
-          patName: "王小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition:"",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:15:15",
-          patTemperature:'35.9',
-          patName: "赵小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition:"",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:11:28",
-          patName: "钱小虎",
-          patTemperature:'36.1',
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition:"",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:16:26",
-          patName: "孙小虎",
-          patTemperature:'38',
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition:"体温错误",
-          tag: "被退回",
-        },
-        {
-          clockTime: "2021-09-27 11:11:25",
-          patName: "李小虎",
-          patTemperature:'36.8',
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition:"已感染",
-          tag: "被退回",
-        },
-        {
-          clockTime: "2021-09-27 11:14:32",
-          patName: "周小虎",
-          patTemperature:'37',
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition:"",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:15:23",
-          patName: "吴小虎",
-          patTemperature:'36',
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition:"时间错误",
-          tag: "被退回",
-        },
-      ],
-      currentRow: null,
-      bodyList:[
-        {
-            value:1,name:"健康"
-          },
-          {
-            value:0,name:"已感染"
-          },
+      //   {
+      //     clockTime: "2021-09-27 11:13:33",
+      //     patTemperature:'36.5',
+      //     patName: "王小虎",
+      //     patAddress: "上海市普陀区金沙江路 1518 弄",
+      //     condition:"",
+      //     tag: "已打卡",
+      //   },
+      //   {
+      //     clockTime: "2021-09-27 11:15:15",
+      //     patTemperature:'35.9',
+      //     patName: "赵小虎",
+      //     patAddress: "上海市普陀区金沙江路 1518 弄",
+      //     condition:"",
+      //     tag: "已打卡",
+      //   },
+      //   {
+      //     clockTime: "2021-09-27 11:11:28",
+      //     patName: "钱小虎",
+      //     patTemperature:'36.1',
+      //     patAddress: "上海市普陀区金沙江路 1518 弄",
+      //     condition:"",
+      //     tag: "已打卡",
+      //   },
+      //   {
+      //     clockTime: "2021-09-27 11:16:26",
+      //     patName: "孙小虎",
+      //     patTemperature:'38',
+      //     patAddress: "上海市普陀区金沙江路 1518 弄",
+      //     condition:"体温错误",
+      //     tag: "被退回",
+      //   },
+      //   {
+      //     clockTime: "2021-09-27 11:11:25",
+      //     patName: "李小虎",
+      //     patTemperature:'36.8',
+      //     patAddress: "上海市普陀区金沙江路 1518 弄",
+      //     condition:"已感染",
+      //     tag: "被退回",
+      //   },
+      //   {
+      //     clockTime: "2021-09-27 11:14:32",
+      //     patName: "周小虎",
+      //     patTemperature:'37',
+      //     patAddress: "上海市普陀区金沙江路 1518 弄",
+      //     condition:"",
+      //     tag: "已打卡",
+      //   },
+      //   {
+      //     clockTime: "2021-09-27 11:15:23",
+      //     patName: "吴小虎",
+      //     patTemperature:'36',
+      //     patAddress: "上海市普陀区金沙江路 1518 弄",
+      //     condition:"时间错误",
+      //     tag: "被退回",
+      //   },
+      // ],
+      // currentRow: null,
+      // bodyList:[
+      //   {
+      //       value:1,name:"健康"
+      //     },
+      //     {
+      //       value:0,name:"已感染"
+      //     },
       ],
       searchQuery: {
         idCard: "",
@@ -253,10 +253,15 @@ export default {
     },
     getHealthyRecordList(){
       userDailyApi.getHealthyRecordList(this.pageSize,this.currentPage).then( response =>{
-        if(response.code == 20000){
-          
+        if(response.data.map.items.length > 0){
+          console.log(response.data.map)
+          console.log(response.data.map.items.length)
+          this.currentPage = response.data.map.current
+          this.total = response.data.map.total
+          this.pageSize = response.data.map.size
+          this.tableData = response.data.map.items
         }else{
-          this.$message.warning(response.message);
+          this.$message.warning("暂无打卡记录");
         }
       })
     }
