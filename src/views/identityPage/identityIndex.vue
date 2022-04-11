@@ -116,10 +116,10 @@ export default {
           { required: true, message: "请输入身份证号", trigger: "blur" },
         ],
         area: [
-          { required: true, message: "请选择所在地区", trigger: "blur" },
+          { required: true, message: "请选择所在地区", trigger: "change" },
         ],
         unit: [
-          { required: true, message: "请选择所在单位", trigger: "blur" },
+          { required: true, message: "请选择所在单位", trigger: "change" },
         ],
         number: [
           { required: true, message: "请输入学号/工号", trigger: "blur" },

@@ -15,28 +15,28 @@
     </el-row>
     <!-- <h2 class="title">复工申请</h2> -->
     <div class="jz">
-      <el-form ref="form" :model="form" label-position="top" label-width="80px">
-        <el-form-item label="申请人">
+      <el-form ref="form" :model="form" label-position="top" label-width="80px" :rules="rules">
+        <el-form-item label="申请人" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="联系电话">
+        <el-form-item label="联系电话" prop="phone">
           <el-input v-model="form.phone"></el-input>
         </el-form-item>
-        <el-form-item label="公司/学校">
+        <el-form-item label="公司/学校" prop="region">
           <el-select v-model="form.region" placeholder="请选择公司/学校">
             <el-option label="宁波财经学院" value="shanghai"></el-option>
             <el-option label="浙江万里学院" value="beijing"></el-option>
             <el-option label="宁波大学" value="qq"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="工号/学号">
+        <el-form-item label="工号/学号" prop="idcard">
           <el-input v-model="form.idcard"></el-input>
         </el-form-item>
 
         <!-- <el-form-item label="申请内容">
           <el-input v-model="form.goout"></el-input>
         </el-form-item> -->
-        <el-form-item label="申请时间">
+        <el-form-item label="申请时间" prop="date1">
           <el-date-picker
             type="date"
             placeholder="选择日期"
@@ -72,6 +72,23 @@ export default {
         idcard:"1822110044"
       },
       gai: null,
+      rules:{
+        name: [
+            { required: true, message: '请输入', trigger: 'blur' },
+          ],
+        phone: [
+            { required: true, message: '请输入', trigger: 'blur' },
+          ],
+          region: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          idcard: [
+            { required: true, message: '请输入', trigger: 'blur' }
+          ],
+          date1: [
+            { required: true, message: '请输入', trigger: 'change' }
+          ],
+      }
     };
   },
   mounted() {

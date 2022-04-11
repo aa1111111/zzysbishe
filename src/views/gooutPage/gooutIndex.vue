@@ -15,42 +15,42 @@
       <div class="jz">
       <p class="zs">申请人信息</p>
 
-      <el-form ref="form" :model="form" label-position="top" label-width="80px">
-        <el-form-item label="申请人">
+      <el-form ref="form" :model="form" label-position="top" label-width="80px" :rules="rules">
+        <el-form-item label="申请人" prop="name">
     <el-input v-model="form.name"></el-input>
   </el-form-item>
-        <el-form-item label="联系电话">
+        <el-form-item label="联系电话" prop="phone">
     <el-input v-model="form.phone"></el-input>
   </el-form-item>
 
 <p class="zs">部门信息</p>
-  <el-form-item label="公司/学校">
+  <el-form-item label="公司/学校" prop="region">
     <el-select v-model="form.region" placeholder="请选择公司/学校">
       <el-option label="宁波财经学院" value="shanghai"></el-option>
       <el-option label="浙江万里学院" value="beijing"></el-option>
       <el-option label="宁波大学" value="qq"></el-option>
     </el-select>
   </el-form-item>
-  <el-form-item label="工号/学号">
+  <el-form-item label="工号/学号" prop="idcard">
     <el-input v-model="form.idcard"></el-input>
   </el-form-item>
 
 <p class="zs">外出信息</p>
-<el-form-item label="请假类别">
+<el-form-item label="请假类别" prop="lb">
     <el-select v-model="form.lb" placeholder="请选择">
       <el-option label="事假" value="shanghai"></el-option>
       <el-option label="病假" value="beijing"></el-option>
       <el-option label="公假" value="qq"></el-option>
     </el-select>
   </el-form-item>
-  <el-form-item label="目的地范围">
+  <el-form-item label="目的地范围" prop="mdd">
     <el-select v-model="form.mdd" placeholder="请选择">
       <el-option label="宁波市内" value="shanghai"></el-option>
       <el-option label="浙江省内宁波市外" value="beijing"></el-option>
       <el-option label="浙江省外" value="qq"></el-option>
     </el-select>
   </el-form-item>
-  <el-form-item label="前往目的地">
+  <el-form-item label="前往目的地" prop="goout">
     <el-input v-model="form.goout"></el-input>
   </el-form-item>
   <el-form-item label="请假时间">
@@ -61,11 +61,11 @@
     <el-col :span="11">
       <el-time-picker placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
     </el-col></el-form-item>
-<el-form-item label="天数">
+<el-form-item label="天数" prop="day">
     <el-input v-model="form.day"></el-input>
   </el-form-item>
 
-  <el-form-item label="外出事由">
+  <el-form-item label="外出事由" prop="desc">
     <el-input type="textarea" v-model="form.desc"></el-input>
   </el-form-item>
   
@@ -94,6 +94,35 @@ export default {
         idcard:"1822110044"
       },
       gai:null,
+      rules:{
+        name: [
+            { required: true, message: '请输入', trigger: 'blur' },
+          ],
+        phone: [
+            { required: true, message: '请输入', trigger: 'blur' },
+          ],
+          region: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          idcard: [
+            { required: true, message: '请输入', trigger: 'blur' }
+          ],
+          lb: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          mdd: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          goout: [
+            { required: true, message: '请输入', trigger: 'blur' }
+          ],
+          day: [
+            { required: true, message: '请输入', trigger: 'blur' }
+          ],
+          desc: [
+            { required: true, message: '请输入', trigger: 'blur' }
+          ]
+      }
     };
   },
   mounted() {
