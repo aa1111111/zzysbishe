@@ -8,7 +8,7 @@
             <el-date-picker
               type="date"
               placeholder="选择日期"
-              v-model="searchQuery.patName"
+              v-model="recordDate"
               style="width: 100%"
             ></el-date-picker>
           </div>
@@ -27,7 +27,7 @@
               "
               size="small"
               class="btnh"
-              @click="search(1)"
+              @click="search()"
             >
               <i class="el-icon-search"></i>
               查询</el-button
@@ -134,7 +134,7 @@
             >
           </template>
         </el-table-column>
-        <el-table-column prop="condition" label="退回理由" fixed align="center">
+        <el-table-column prop="scope.row.msgBack" label="退回理由" fixed align="center">
         </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="130" align="center">
@@ -163,6 +163,7 @@ export default {
       pageSize: 1,
       currentPage: 10,
       total: 0,
+      recordDate:"",
       tableData: [
         //   {
         //     clockTime: "2021-09-27 11:13:33",
@@ -230,12 +231,6 @@ export default {
         //       value:0,name:"已感染"
         //     },
       ],
-      searchQuery: {
-        idCard: "",
-        patName: "",
-        clockCon: [],
-        bodyCon: [],
-      },
       clockList: [
         {
           value: 1,
@@ -271,30 +266,23 @@ export default {
       return row.condition === value;
     },
     reset() {
-      (this.searchQuery = {
-        idCard: "",
-        patName: "",
-        clockCon: [],
-        bodyCon: [],
-      }),
-        (this.createDataRange = []);
-      this.modifyDataRange = [];
-      this.search();
+      this.recordDate="",
+      this.getHealthyRecordList();
     },
     deleteEmpType() {
       console.log(2);
     },
+    
     getHealthyRecordList() {
       userDailyApi
-        .getHealthyRecordList(this.pageSize, this.currentPage)
+        .getHealthyRecordList(this.pageSize, this.currentPage, this.recordDate)
         .then((response) => {
-          if (response.data.map.items.length > 0) {
-            console.log(response.data.map);
-            console.log(response.data.map.items.length);
-            this.currentPage = response.data.map.current;
-            this.total = response.data.map.total;
-            this.pageSize = response.data.map.size;
-            this.tableData = response.data.map.items;
+          console.log(response.data);
+          if (response.data.items.length > 0) {
+            this.tableData = response.data.items;
+            this.currentPage = response.data.data.current;
+            this.total = response.data.data.total;
+            this.pageSize = response.data.data.size;
           } else {
             this.$message.warning("暂无打卡记录");
           }

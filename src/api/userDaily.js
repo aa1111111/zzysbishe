@@ -8,6 +8,9 @@ export default {
     let url = `/zzysbishe/healthyRecord/getHealthyRecordList/`+page+`/`+limit
     return request.get(url)
   },
-  
+  addHealthyRecord(healthyRecord){
+    let url = `/zzysbishe/healthyRecord/addHealthyRecord`
+    return request.post(url,healthyRecord)
+  }
   
 }
