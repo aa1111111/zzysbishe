@@ -14,7 +14,7 @@
       </p>
       <p class="rq">日期：2021年11月22日</p>
 
-      <el-form ref="form" :model="form" label-position="top" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-position="top" label-width="80px">
         <el-form-item label="1.目前所在地区">
 <v-distpicker :province="addressprovince" :city="addresscity" :area="addressdist" @selected="onSelected"></v-distpicker>
 </el-form-item>
@@ -103,6 +103,35 @@ export default {
         isVaccination:"",
       },
       gai:null,
+      rules:{
+        area: [
+            { required: true, message: '请选择', trigger: 'change' },
+          ],
+          a: [
+            { required: true, message: '请选择', trigger: 'change' },
+          ],
+          b: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          c: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          d: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          e: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          f: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          g: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ],
+          h: [
+            { required: true, message: '请选择', trigger: 'change' }
+          ]
+      }
     };
   },
   mounted() {

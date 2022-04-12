@@ -173,21 +173,21 @@ export default {
       } else {
         // 为表单绑定验证功能
         // debugger
-        console.log(this.form);
-        this.$router.push({ path: "index", query: { userType: this.form.roleType} });
-      //   loginApi.userLogin(this.form).then(response => {
-      //   //  debugger
-      //   console.log(response.data.userInfo);
-      //   this.userInfo = response.data.userInfo;
-      //   if(response.code == "20000"){
-      //     this.$router.push({ path: "index", query: { userType: this.form.roleType} });
-      //   }else{
-      //     this.$message({
-      //           type:"warning",
-      //           message: response.message
-      //       })
-      //   }
-      //  })
+        // console.log(this.form);
+        // this.$router.push({ path: "index", query: { userType: this.form.roleType} });
+        loginApi.userLogin(this.form).then(response => {
+        //  debugger
+        console.log(response.data.userInfo);
+        this.userInfo = response.data.userInfo;
+        if(response.code == "20000"){
+          this.$router.push({ path: "index", query: { userType: this.form.roleType} });
+        }else{
+          this.$message({
+                type:"warning",
+                message: response.message
+            })
+        }
+       })
       }
     },
     randomNum(min, max) {
