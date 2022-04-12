@@ -65,6 +65,7 @@
         highlight-current-row
         height="300"
         ref="table"
+        :row-key="getRowKey"
         :header-cell-style="{ background: '#994a8e', color: 'white' }"
         style="width: 100%"
       >
@@ -114,7 +115,6 @@
         >
         </el-table-column>
         <el-table-column
-          prop="tag"
           label="是否打卡"
           width="100"
           fixed
@@ -128,14 +128,14 @@
         >
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.tag === '已打卡' ? 'success' : 'warning'"
+              :type="scope.row.status === 0 ? 'success' : 'warning'"
               disable-transitions
-              ><span v-if="scope.row.tag == 0">已打卡</span>
-            <span v-if="scope.row.tag == 1">被退回</span></el-tag
+              ><span v-if="scope.row.status == 0">已打卡</span>
+            <span v-if="scope.row.status == 1">被退回</span></el-tag
             >
           </template>
         </el-table-column>
-        <el-table-column prop="scope.row.msgBack" label="退回理由" fixed align="center">
+        <el-table-column prop="msgBack" label="退回理由" fixed align="center">
         </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="130" align="center">
@@ -254,6 +254,9 @@ export default {
         query: { userType: this.userType },
       });
     },
+    getRowKey(row){
+         return row.id;
+    }, 
     modify() {
       this.$router.push({
         path: "userDailyIndex",
@@ -261,7 +264,7 @@ export default {
       });
     },
     filterTag(value, row) {
-      return row.tag === value;
+      return row.status === value;
     },
     filterCon(value, row) {
       return row.condition === value;
@@ -281,9 +284,9 @@ export default {
           console.log(response.data);
           if (response.data.items.length > 0) {
             this.tableData = response.data.items;
-            this.currentPage = response.data.data.current;
-            this.total = response.data.data.total;
-            this.pageSize = response.data.data.size;
+            this.currentPage = response.data.current;
+            this.total = response.data.total;
+            this.pageSize = response.data.size;
           } else {
             this.$message.warning("暂无打卡记录");
           }
