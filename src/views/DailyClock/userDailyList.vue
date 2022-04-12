@@ -52,7 +52,7 @@
           新增
         </el-button>
 
-        <el-button @click="deleteEmpType" size="small">
+        <el-button @click="deleteEmpType" size="small" :disabled="this.multipleSelection.length === 0">
           <i class="el-icon-delete"></i>
           删除
         </el-button>
@@ -66,11 +66,13 @@
         height="300"
         ref="table"
         :row-key="getRowKey"
+        @selection-change="handleSelectionChange"
         :header-cell-style="{ background: '#994a8e', color: 'white' }"
         style="width: 100%"
       >
         <el-table-column
           type="selection"
+          label="序号"
           width="50"
           fixed
           :reserve-selection="true"
@@ -139,8 +141,8 @@
         </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="130" align="center">
-          <template>
-            <el-button type="text" size="small" @click="modify">修改</el-button>
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="modify(scope.row.uuid)">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -165,6 +167,7 @@ export default {
       currentPage: 10,
       total: 0,
       recordDate:"",
+      multipleSelection:[],
       tableData: [
         //   {
         //     clockTime: "2021-09-27 11:13:33",
@@ -257,10 +260,13 @@ export default {
     getRowKey(row){
          return row.id;
     }, 
-    modify() {
+    handleSelectionChange(val){
+      this.multipleSelection = val;
+    },
+    modify(uuid) {
       this.$router.push({
         path: "userDailyIndex",
-        query: { userType: this.userType, gai: 1 },
+        query: { recordId: uuid, gai: 1},
       });
     },
     filterTag(value, row) {
@@ -273,8 +279,8 @@ export default {
       this.recordDate="",
       this.getHealthyRecordList();
     },
-    deleteEmpType() {
-      console.log(2);
+    deleteEmpType () {
+      //批量删除的方法
     },
     
     getHealthyRecordList() {

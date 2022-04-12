@@ -11,6 +11,14 @@ export default {
   addHealthyRecord(healthyRecord){
     let url = `/zzysbishe/healthyRecord/addHealthyRecord`
     return request.post(url,healthyRecord)
+  },
+  getHealthyRecordInfo(recordId){
+    let url = `/zzysbishe/healthyRecord/getHealthyRecordInfo/`+recordId
+    return request.get(url)
+  },
+  updateHealthyRecord(healthyRecord){
+    let url = `/zzysbishe/healthyRecord/updateHealthyRecord`
+    return request.put(url,healthyRecord)
   }
   
 }
