@@ -130,7 +130,8 @@
             <el-tag
               :type="scope.row.tag === '已打卡' ? 'success' : 'warning'"
               disable-transitions
-              >{{ scope.row.tag }}</el-tag
+              ><span v-if="scope.row.tag == 0">已打卡</span>
+            <span v-if="scope.row.tag == 1">被退回</span></el-tag
             >
           </template>
         </el-table-column>
