@@ -16,7 +16,6 @@
         <template slot="title">系统管理</template>
         <el-menu-item index="2-1" @click="onPush2()">管理员列表</el-menu-item>
         <el-menu-item index="2-2" @click="onPush3()">角色管理</el-menu-item>
-        <el-menu-item index="2-3" @click="onPush4()">选项3</el-menu-item>
       </el-submenu>
       <el-menu-item index="3" @click="onPush5()">实时疫情状态</el-menu-item>
       <el-submenu index="4">
@@ -85,13 +84,10 @@ export default {
       this.$router.push({ path: 'index', query: { userType: this.userType} })
     },
     onPush2(){
-      this.$router.push({ path: 'index', query: { userType: this.userType} })
+      this.$router.push({ path: 'adindex', query: { userType: this.userType} })
     },
     onPush3(){
-      this.$router.push({ path: 'index', query: { userType: this.userType} })
-    },
-    onPush4(){
-      this.$router.push({ path: 'index', query: { userType: this.userType} })
+      this.$router.push({ path: 'rmindex', query: { userType: this.userType} })
     },
     onPush5(){
       this.$router.push({ path: 'rtindex', query: { userType: this.userType} })

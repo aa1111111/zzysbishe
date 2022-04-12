@@ -197,6 +197,29 @@ export const constantRoutes = [
         },
       ]
     },
+    {
+      path: "/AdminList",
+      redirect: "/AdminList/adindex",
+      component: Layout,
+  
+      meta: { title: "管理员列表", icon: "DailyClock", requireAuth: true },
+      children: [
+        {
+          path: "/adindex",
+          name: "adindex",
+  
+          component: () => import("@/views/AdminList/adindex"),
+          meta: { title: "管理员列表", requireAuth: true }
+        },
+        {
+          path: "/rmindex",
+          name: "rmindex",
+  
+          component: () => import("@/views/RoleMan/rmindex"),
+          meta: { title: "角色列表", requireAuth: true }
+        },
+      ]
+    },
   ];
   const createRouter = () =>
   new Router({
