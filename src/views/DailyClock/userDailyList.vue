@@ -281,6 +281,33 @@ export default {
     },
     deleteEmpType () {
       //批量删除的方法
+      if (this.multipleSelection.length <= 0) {
+        this.$message.info("请选择要删除的数据")
+        return
+      }
+      if (!enable) {
+        this.$message.warning("所选数据中存在不能被删除数据，不能进行删除！")
+        return
+      }
+      this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        //参数
+        const params = this.multipleSelection.map((i) => {
+          return i.id
+        })
+        deleteLyzRoom(params).then((response) => {
+          this.$message.success("删除成功")
+          this.getHealthyRecordList()
+        })
+      }).catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消删除",
+        })
+      })
     },
     
     getHealthyRecordList() {
