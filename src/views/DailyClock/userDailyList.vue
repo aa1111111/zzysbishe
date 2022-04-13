@@ -52,7 +52,11 @@
           新增
         </el-button>
 
-        <el-button @click="deleteEmpType" size="small" :disabled="this.multipleSelection.length === 0">
+        <el-button
+          @click="deleteEmpType"
+          size="small"
+          :disabled="this.multipleSelection.length === 0"
+        >
           <i class="el-icon-delete"></i>
           删除
         </el-button>
@@ -133,7 +137,7 @@
               :type="scope.row.status === 0 ? 'success' : 'warning'"
               disable-transitions
               ><span v-if="scope.row.status == 0">已打卡</span>
-            <span v-if="scope.row.status == 1">被退回</span></el-tag
+              <span v-if="scope.row.status == 1">被退回</span></el-tag
             >
           </template>
         </el-table-column>
@@ -142,7 +146,9 @@
 
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="modify(scope.row.uuid)">修改</el-button>
+            <el-button type="text" size="small" @click="modify(scope.row.uuid)"
+              >修改</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -166,75 +172,9 @@ export default {
       pageSize: 1,
       currentPage: 10,
       total: 0,
-      recordDate:"",
-      multipleSelection:[],
-      tableData: [
-        //   {
-        //     clockTime: "2021-09-27 11:13:33",
-        //     patTemperature:'36.5',
-        //     patName: "王小虎",
-        //     patAddress: "上海市普陀区金沙江路 1518 弄",
-        //     condition:"",
-        //     tag: "已打卡",
-        //   },
-        //   {
-        //     clockTime: "2021-09-27 11:15:15",
-        //     patTemperature:'35.9',
-        //     patName: "赵小虎",
-        //     patAddress: "上海市普陀区金沙江路 1518 弄",
-        //     condition:"",
-        //     tag: "已打卡",
-        //   },
-        //   {
-        //     clockTime: "2021-09-27 11:11:28",
-        //     patName: "钱小虎",
-        //     patTemperature:'36.1',
-        //     patAddress: "上海市普陀区金沙江路 1518 弄",
-        //     condition:"",
-        //     tag: "已打卡",
-        //   },
-        //   {
-        //     clockTime: "2021-09-27 11:16:26",
-        //     patName: "孙小虎",
-        //     patTemperature:'38',
-        //     patAddress: "上海市普陀区金沙江路 1518 弄",
-        //     condition:"体温错误",
-        //     tag: "被退回",
-        //   },
-        //   {
-        //     clockTime: "2021-09-27 11:11:25",
-        //     patName: "李小虎",
-        //     patTemperature:'36.8',
-        //     patAddress: "上海市普陀区金沙江路 1518 弄",
-        //     condition:"已感染",
-        //     tag: "被退回",
-        //   },
-        //   {
-        //     clockTime: "2021-09-27 11:14:32",
-        //     patName: "周小虎",
-        //     patTemperature:'37',
-        //     patAddress: "上海市普陀区金沙江路 1518 弄",
-        //     condition:"",
-        //     tag: "已打卡",
-        //   },
-        //   {
-        //     clockTime: "2021-09-27 11:15:23",
-        //     patName: "吴小虎",
-        //     patTemperature:'36',
-        //     patAddress: "上海市普陀区金沙江路 1518 弄",
-        //     condition:"时间错误",
-        //     tag: "被退回",
-        //   },
-        // ],
-        // currentRow: null,
-        // bodyList:[
-        //   {
-        //       value:1,name:"健康"
-        //     },
-        //     {
-        //       value:0,name:"已感染"
-        //     },
-      ],
+      recordDate: "",
+      multipleSelection: [],
+      tableData: [],
       clockList: [
         {
           value: 1,
@@ -257,16 +197,16 @@ export default {
         query: { userType: this.userType },
       });
     },
-    getRowKey(row){
-         return row.id;
-    }, 
-    handleSelectionChange(val){
+    getRowKey(row) {
+      return row.id;
+    },
+    handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     modify(uuid) {
       this.$router.push({
         path: "userDailyIndex",
-        query: { recordId: uuid, gai: 1},
+        query: { recordId: uuid, gai: 1 },
       });
     },
     filterTag(value, row) {
@@ -276,40 +216,41 @@ export default {
       return row.condition === value;
     },
     reset() {
-      this.recordDate="",
-      this.getHealthyRecordList();
+      (this.recordDate = ""), this.getHealthyRecordList();
     },
-    deleteEmpType () {
+    deleteEmpType() {
       //批量删除的方法
       if (this.multipleSelection.length <= 0) {
-        this.$message.info("请选择要删除的数据")
-        return
+        this.$message.info("请选择要删除的数据");
+        return;
       }
       if (!enable) {
-        this.$message.warning("所选数据中存在不能被删除数据，不能进行删除！")
-        return
+        this.$message.warning("所选数据中存在不能被删除数据，不能进行删除！");
+        return;
       }
       this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
-        //参数
-        const params = this.multipleSelection.map((i) => {
-          return i.id
-        })
-        deleteLyzRoom(params).then((response) => {
-          this.$message.success("删除成功")
-          this.getHealthyRecordList()
-        })
-      }).catch(() => {
-        this.$message({
-          type: "info",
-          message: "已取消删除",
-        })
       })
+        .then(() => {
+          //参数
+          const params = this.multipleSelection.map((i) => {
+            return i.id;
+          });
+          deleteLyzRoom(params).then((response) => {
+            this.$message.success("删除成功");
+            this.getHealthyRecordList();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
-    
+
     getHealthyRecordList() {
       userDailyApi
         .getHealthyRecordList(this.pageSize, this.currentPage, this.recordDate)

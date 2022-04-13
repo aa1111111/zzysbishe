@@ -1,16 +1,16 @@
 <template>
-  <div class="box"> 
+  <div class="box">
     <div class="search">
       <el-row :gutter="90">
         <el-col :span="6">
           <div class="search-item">
             <span style="width: 100px">日期</span>
-          <el-date-picker
-            type="date"
-            placeholder="选择日期"
-            v-model="searchQuery.patName"
-            style="width: 100%"
-          ></el-date-picker>
+            <el-date-picker
+              type="date"
+              placeholder="选择日期"
+              v-model="recordDate"
+              style="width: 100%"
+            ></el-date-picker>
           </div>
         </el-col>
         <el-col :span="5">
@@ -27,7 +27,7 @@
               "
               size="small"
               class="btnh"
-              @click="search(1)"
+              @click="search()"
             >
               <i class="el-icon-search"></i>
               查询</el-button
@@ -100,18 +100,18 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column
-          prop="time"
-          label="申请时间"
-          fixed
-          align="center"
-        >
+        <el-table-column prop="time" label="申请时间" fixed align="center">
         </el-table-column>
         <el-table-column prop="remark" label="备注说明" fixed align="center">
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
         </el-table-column>
-        <el-table-column prop="statusly" label="审核不通过理由" fixed align="center">
+        <el-table-column
+          prop="statusly"
+          label="审核不通过理由"
+          fixed
+          align="center"
+        >
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template>
@@ -121,103 +121,115 @@
       </el-table>
     </div>
     <div class="block">
-  <el-pagination
-    layout="prev, pager, next"
-    :total="50">
-  </el-pagination>
-</div>
+      <el-pagination
+        layout="prev, pager, next"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :total="total"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 <script>
+import userDailyApi from "../../api/userDaily";
 export default {
-  components:{
-  },
   data() {
     return {
-      tableData: [
-        {
-          time: "2021-09-27 11:13:33",
-          content: "复工申请",
-          patName: "王小虎",
-          status: "未审核",
-          remark: "健康",
-          statusly: "",
-        },
-        {
-          time: "2021-10-27 11:13:33",
-          content: "复工申请",
-          patName: "王小虎",
-          status: "通过",
-          remark: "健康",
-          statusly: "",
-        },
-        {
-          time: "2021-09-27 11:13:33",
-          content: "复工申请",
-          patName: "王小虎",
-          status: "未通过",
-          remark: "健康",
-          statusly: "时间错误",
-        },
-        {
-          time: "2021-09-28 11:13:33",
-          content: "复工申请",
-          patName: "王小虎",
-          status: "通过",
-          remark: "健康",
-          statusly: "",
-        },
-        {
-          time: "2021-09-29 11:13:33",
-          content: "复工申请",
-          patName: "王小虎",
-          status: "通过",
-          remark: "健康",
-          statusly: "",
-        },
-        
-      ],
-      currentRow: null,
-      searchQuery: {
-        patName: ""
-      },
+      pageSize: 1,
+      currentPage: 10,
+      total: 0,
+      recordDate: "",
+      multipleSelection: [],
+      tableData: [],
     };
   },
+  created() {
+    this.getHealthyRecordList();
+  },
   methods: {
+    addEmpType() {
+      this.$router.push({
+        path: "userDailyIndex",
+        query: { userType: this.userType },
+      });
+    },
+    getRowKey(row) {
+      return row.id;
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    modify(uuid) {
+      this.$router.push({
+        path: "userDailyIndex",
+        query: { recordId: uuid, gai: 1 },
+      });
+    },
     filterTag(value, row) {
-      return row.tag === value;
+      return row.status === value;
     },
     filterCon(value, row) {
       return row.condition === value;
     },
     reset() {
-      (this.searchQuery = {
-        idCard: "",
-        patName: "",
-        clockCon: [],
-        bodyCon: [],
-      }),
-        (this.createDataRange = []);
-      this.modifyDataRange = [];
-      this.search();
-    },
-    addEmpType() {
-      this.$router.push({ path: 'returnIndex', query: { userType: this.userType} })
-    
-    },
-    modify(){
-        this.$router.push({ path: 'returnIndex', query: { userType: this.userType,gai:1} })
+      (this.recordDate = ""), this.getHealthyRecordList();
     },
     deleteEmpType() {
-      console.log(2);
+      //批量删除的方法
+      if (this.multipleSelection.length <= 0) {
+        this.$message.info("请选择要删除的数据");
+        return;
+      }
+      if (!enable) {
+        this.$message.warning("所选数据中存在不能被删除数据，不能进行删除！");
+        return;
+      }
+      this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //参数
+          const params = this.multipleSelection.map((i) => {
+            return i.id;
+          });
+          deleteLyzRoom(params).then((response) => {
+            this.$message.success("删除成功");
+            this.getHealthyRecordList();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+
+    getHealthyRecordList() {
+      userDailyApi
+        .getHealthyRecordList(this.pageSize, this.currentPage, this.recordDate)
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.items.length > 0) {
+            this.tableData = response.data.items;
+            this.currentPage = response.data.current;
+            this.total = response.data.total;
+            this.pageSize = response.data.size;
+          } else {
+            this.$message.warning("暂无打卡记录");
+          }
+        });
     },
   },
 };
 </script>
 <style scoped>
-.box{
+.box {
   padding: 200px 100px 0 100px;
-/* color: #d6aac58c; */
+  /* color: #d6aac58c; */
 }
 .search {
   border-bottom: 1px solid #eeeeee;
@@ -248,7 +260,7 @@ export default {
 }
 .btnh :hover {
 }
-.block{
+.block {
   padding-top: 40px;
   padding-bottom: 40px;
   text-align: center;

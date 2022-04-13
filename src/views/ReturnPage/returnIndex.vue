@@ -1,7 +1,6 @@
 <template>
   <div class="box">
-    <el-page-header @back="goBack">
-</el-page-header>
+    <el-page-header @back="goBack"> </el-page-header>
     <el-row>
       <el-col :span="6">
         <div class="img1">
@@ -15,7 +14,13 @@
     </el-row>
     <!-- <h2 class="title">复工申请</h2> -->
     <div class="jz">
-      <el-form ref="form" :model="form" label-position="top" label-width="80px" :rules="rules">
+      <el-form
+        ref="form"
+        :model="form"
+        label-position="top"
+        label-width="80px"
+        :rules="rules"
+      >
         <el-form-item label="申请人" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -24,9 +29,16 @@
         </el-form-item>
         <el-form-item label="公司/学校" prop="region">
           <el-select v-model="form.region" placeholder="请选择公司/学校">
-            <el-option label="宁波财经学院" value="shanghai"></el-option>
+            <el-option
+              v-for="(item, index) in regionList"
+              :key="index"
+              :label="item.name"
+              :value="item.value"
+            >
+            </el-option>
+            <!-- <el-option label="宁波财经学院" value="shanghai"></el-option>
             <el-option label="浙江万里学院" value="beijing"></el-option>
-            <el-option label="宁波大学" value="qq"></el-option>
+            <el-option label="宁波大学" value="qq"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item label="工号/学号" prop="idcard">
@@ -49,10 +61,10 @@
         </el-form-item>
 
         <el-form-item class="btn">
-          <el-button v-show="this.gai == null" type="primary" @click="onSubmit"
+          <el-button v-show="this.gai == null" type="primary" @click="save"
             >立即创建</el-button
           >
-          <el-button v-show="this.gai == 1" type="primary" @click="onSubmit"
+          <el-button v-show="this.gai == 1" type="primary" @click="modify"
             >修改完成</el-button
           >
           <el-button>取消</el-button>
@@ -66,43 +78,85 @@ export default {
   data() {
     return {
       form: {
-        name:"王小虎",
-        phone:"1321245852",
-        region:"宁波财经学院",
-        idcard:"1822110044"
+        name: "王小虎",
+        phone: "1321245852",
+        region: "宁波财经学院",
+        idcard: "1822110044",
       },
+      regionList: [
+        {
+          value: "1",
+          name: "宁波大学",
+        },
+        {
+          value: "2",
+          name: "浙江万里学院",
+        },
+        {
+          value: "3",
+          name: "宁波财经学院",
+        },
+      ],
       gai: null,
-      rules:{
-        name: [
-            { required: true, message: '请输入', trigger: 'blur' },
-          ],
-        phone: [
-            { required: true, message: '请输入', trigger: 'blur' },
-          ],
-          region: [
-            { required: true, message: '请选择', trigger: 'change' }
-          ],
-          idcard: [
-            { required: true, message: '请输入', trigger: 'blur' }
-          ],
-          date1: [
-            { required: true, message: '请输入', trigger: 'change' }
-          ],
-      }
+      rules: {
+        name: [{ required: true, message: "请输入", trigger: "blur" }],
+        phone: [{ required: true, message: "请输入", trigger: "blur" }],
+        region: [{ required: true, message: "请选择", trigger: "change" }],
+        idcard: [{ required: true, message: "请输入", trigger: "blur" }],
+        date1: [{ required: true, message: "请输入", trigger: "change" }],
+      },
     };
   },
   mounted() {
     this.gai = this.$route.query.gai;
-    console.log(this.gai)
+    console.log(this.gai);
   },
   methods: {
-     goBack() {
-        this.$router.go(-1)
-      },
-    onSubmit() {
-      this.$router.push({
-        path: "returnList",
-        query: { userType: this.userType },
+    goBack() {
+      this.$router.go(-1);
+    },
+    save() {
+      this.$refs["form"].validate((valid) => {
+        this.addHealthyRecord();
+      });
+    },
+    modify() {
+      this.$refs["form"].validate((valid) => {
+        this.updateHealthyRecord();
+      });
+    },
+    addHealthyRecord() {
+      userDailyApi.addHealthyRecord(this.form).then((response) => {
+        if (response.code == 20000) {
+          setTimeout(() => {
+            this.$message.success("添加成功");
+          }, 3000);
+          this.$router.push({
+            path: "userDailyList",
+            query: { userType: this.userType },
+          });
+        }
+      });
+    },
+    getHealthyRecordInfo() {
+      userDailyApi.getHealthyRecordInfo(this.recordId).then((response) => {
+        if (response.code == 20000) {
+          this.form = response.data.healthyRecord;
+        }
+      });
+    },
+    updateHealthyRecord() {
+      console.log(this.form);
+      userDailyApi.updateHealthyRecord(this.form).then((response) => {
+        if (response.code == 20000) {
+          setTimeout(() => {
+            this.$message.success("修改成功");
+          }, 3000);
+          this.$router.push({
+            path: "userDailyList",
+            query: { userType: this.userType },
+          });
+        }
       });
     },
   },
