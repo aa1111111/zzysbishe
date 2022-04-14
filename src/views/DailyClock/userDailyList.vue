@@ -6,9 +6,11 @@
           <div class="search-item">
             <span style="width: 100px">日期</span>
             <el-date-picker
-              type="date"
+              type="datetime"
               placeholder="选择日期"
               v-model="recordDate"
+              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
               style="width: 100%"
             ></el-date-picker>
           </div>
@@ -169,12 +171,13 @@ import userDailyApi from "../../api/userDaily";
 export default {
   data() {
     return {
-      pageSize: 1,
-      currentPage: 10,
+      pageSize: 10,
+      currentPage: 1,
       total: 0,
       recordDate: "",
       multipleSelection: [],
       tableData: [],
+      ids: [],
       clockList: [
         {
           value: 1,
@@ -200,8 +203,11 @@ export default {
     getRowKey(row) {
       return row.id;
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.multipleSelection = val;
+      this.ids = this.multipleSelection .map((item) => {
+        return item.uuid
+      })
     },
     modify(uuid) {
       this.$router.push({
@@ -220,12 +226,9 @@ export default {
     },
     deleteEmpType() {
       //批量删除的方法
-      if (this.multipleSelection.length <= 0) {
+      if (this.multipleSelection == [] ||
+        this.multipleSelection.length == 0) {
         this.$message.info("请选择要删除的数据");
-        return;
-      }
-      if (!enable) {
-        this.$message.warning("所选数据中存在不能被删除数据，不能进行删除！");
         return;
       }
       this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
@@ -235,10 +238,7 @@ export default {
       })
         .then(() => {
           //参数
-          const params = this.multipleSelection.map((i) => {
-            return i.id;
-          });
-          deleteLyzRoom(params).then((response) => {
+          userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getHealthyRecordList();
           });
@@ -250,10 +250,12 @@ export default {
           });
         });
     },
-
+    search(){
+      this.getHealthyRecordList()
+    },
     getHealthyRecordList() {
       userDailyApi
-        .getHealthyRecordList(this.pageSize, this.currentPage, this.recordDate)
+        .getHealthyRecordList(this.currentPage, this.pageSize, this.recordDate)
         .then((response) => {
           console.log(response.data);
           if (response.data.items.length > 0) {
@@ -262,6 +264,7 @@ export default {
             this.total = response.data.total;
             this.pageSize = response.data.size;
           } else {
+            this.tableData=[]
             this.$message.warning("暂无打卡记录");
           }
         });

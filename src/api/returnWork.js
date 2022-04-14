@@ -4,8 +4,8 @@ import * as request from '@/utils/request'
  * 接口封装
  */
 export default {
-    getHealthyRecordList(page,limit,recordDate) {
-    let url = `/zzysbishe/healthyRecord/getHealthyRecordList/`+page+`/`+limit+`?recordDate=`+recordDate
+  getWorkApplicationList(page,limit,applyDate) {
+    let url = `/zzysbishe/returnWorkApplication/getWorkApplicationList/`+page+`/`+limit+`?applyDate=`+applyDate
     return request.get(url)
   },
   addHealthyRecord(healthyRecord){
@@ -23,6 +23,10 @@ export default {
   deleteHealthyRecord(uuids){
     let url= `/zzysbishe/healthyRecord/deleteHealthyRecord/`+uuids
     return request.remove(url)
+  },
+  getUserInfo(){
+    let url = `/zzysbishe/returnWorkApplication/getUserInfo/`
+    return request.get(url)
   }
   
 }

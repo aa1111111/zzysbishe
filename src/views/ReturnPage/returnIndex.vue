@@ -21,38 +21,37 @@
         label-width="80px"
         :rules="rules"
       >
-        <el-form-item label="申请人" prop="name">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="申请人" prop="userName">
+          <el-input v-model="form.userName" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="form.phone"></el-input>
+          <el-input v-model="form.phone" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="公司/学校" prop="region">
-          <el-select v-model="form.region" placeholder="请选择公司/学校">
-            <el-option
-              v-for="(item, index) in regionList"
-              :key="index"
-              :label="item.name"
-              :value="item.value"
-            >
+        <el-form-item label="公司/学校" prop="unitId">
+          <el-select v-model="form.unitId" placeholder="请选择公司/学校">
+             <el-option 
+            v-for="item in options"
+            :key="item.uuid"
+            :label="item.unitName"
+            :value="item.uuid">
             </el-option>
             <!-- <el-option label="宁波财经学院" value="shanghai"></el-option>
             <el-option label="浙江万里学院" value="beijing"></el-option>
             <el-option label="宁波大学" value="qq"></el-option> -->
           </el-select>
         </el-form-item>
-        <el-form-item label="工号/学号" prop="idcard">
-          <el-input v-model="form.idcard"></el-input>
+        <el-form-item label="工号/学号" prop="number">
+          <el-input v-model="form.number"></el-input>
         </el-form-item>
 
         <!-- <el-form-item label="申请内容">
           <el-input v-model="form.goout"></el-input>
         </el-form-item> -->
-        <el-form-item label="申请时间" prop="date1">
+        <el-form-item label="申请时间" prop="applyTime">
           <el-date-picker
             type="date"
             placeholder="选择日期"
-            v-model="form.date1"
+            v-model="form.applyTime"
             style="width: 100%"
           ></el-date-picker>
         </el-form-item>
@@ -74,14 +73,20 @@
   </div>
 </template>
 <script>
+import returnWorkApi from "../../api/returnWork";
+import loginApi from "../../api/login";
 export default {
   data() {
     return {
+      options: "",
+      optionsCopy:"",
       form: {
-        name: "王小虎",
-        phone: "1321245852",
-        region: "宁波财经学院",
-        idcard: "1822110044",
+        userName:"",
+        phone:"",
+        unit:"",
+        number:"",
+        applyTime:"",
+        remark:""
       },
       regionList: [
         {
@@ -99,13 +104,17 @@ export default {
       ],
       gai: null,
       rules: {
-        name: [{ required: true, message: "请输入", trigger: "blur" }],
-        phone: [{ required: true, message: "请输入", trigger: "blur" }],
+        // userName: [{ required: true, message: "请输入", trigger: "blur" }],
+        // phone: [{ required: true, message: "请输入", trigger: "blur" }],
         region: [{ required: true, message: "请选择", trigger: "change" }],
         idcard: [{ required: true, message: "请输入", trigger: "blur" }],
         date1: [{ required: true, message: "请输入", trigger: "change" }],
       },
     };
+  },
+  created() {
+    this.getUserInfo();
+    this.getUnitList();
   },
   mounted() {
     this.gai = this.$route.query.gai;
@@ -114,6 +123,30 @@ export default {
   methods: {
     goBack() {
       this.$router.go(-1);
+    },
+    getUserInfo(){
+      returnWorkApi.getUserInfo().then(response=>{
+        this.form = response.data.userInfo
+      })
+    },
+    getUnitList(){
+      loginApi.getUnitList().then(response =>{
+        console.log(response.data.unitList)
+        this.options = response.data.unitList
+        this.optionsCopy = response.data.unitList
+      })
+    },
+    dataFilter(val) {
+      this.value = val;
+      if (val) { //val存在
+        this.options = this.optionsCopy.filter((item) => {
+          if (!!~item.unitName.indexOf(val) || !!~item.unitName.toUpperCase().indexOf(val.toUpperCase())) {
+            return true
+          }
+        })
+      } else { //val为空时，还原数组
+        this.options = this.optionsCopy;
+      }
     },
     save() {
       this.$refs["form"].validate((valid) => {

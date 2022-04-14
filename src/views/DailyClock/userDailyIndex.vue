@@ -11,7 +11,7 @@
       <p class="zs">
         每天健康打卡报平安，请填写今日健康打卡。所有信息仅用于组织了解员工身体状况，不会泄露作他用。
       </p>
-      <p class="rq">日期：2021年11月22日</p>
+      <p class="rq">日期：{{date}}</p>
 
       <el-form
         ref="form"
@@ -122,6 +122,7 @@ import userDailyApi from "../../api/userDaily";
 export default {
   data() {
     return {
+      date:"",
       addressprovince: "浙江省",
       addresscity: "宁波市",
       addressdist: "鄞州区",
@@ -157,13 +158,31 @@ export default {
       },
     };
   },
-  created() {},
+  created() {
+    this.nowTimes();
+  },
   mounted() {
     this.recordId = this.$route.query.recordId;
     this.gai = this.$route.query.gai;
     this.getHealthyRecordInfo();
   },
   methods: {
+    timeFormate(timeStamp) {
+          let year = new Date(timeStamp).getFullYear();
+          let month =new Date(timeStamp).getMonth() + 1 < 10? "0" + (new Date(timeStamp).getMonth() + 1): new Date(timeStamp).getMonth() + 1;
+          let date =new Date(timeStamp).getDate() < 10? "0" + new Date(timeStamp).getDate(): new Date(timeStamp).getDate();
+          // let hh =new Date(timeStamp).getHours() < 10? "0" + new Date(timeStamp).getHours(): new Date(timeStamp).getHours();
+          // let mm =new Date(timeStamp).getMinutes() < 10? "0" + new Date(timeStamp).getMinutes(): new Date(timeStamp).getMinutes();
+          // let ss =new Date(timeStamp).getSeconds() < 10? "0" + new Date(timeStamp).getSeconds(): new Date(timeStamp).getSeconds();
+          // return year + "年" + month + "月" + date +"日"+" "+hh+":"+mm ;
+          this.date = year + "年" + month + "月" + date +"日" ;
+          console.log(this.date);
+    },
+    // 定时器函数
+    nowTimes() {
+      this.timeFormate(new Date());
+      this.timer = setTimeout(this.nowTimes, 30 * 1000);
+    },
     save() {
       this.$refs["form"].validate((valid) => {
         this.addHealthyRecord();
