@@ -81,7 +81,7 @@
           label="序号"
           width="50"
           fixed
-          :reserve-selection="true"
+          :reserve-selection="isSelected"
           align="center"
         >
         </el-table-column>
@@ -177,6 +177,7 @@ export default {
       recordDate: "",
       multipleSelection: [],
       tableData: [],
+      isSelected:true,
       ids: [],
       clockList: [
         {
@@ -195,10 +196,13 @@ export default {
   },
   methods: {
     addEmpType() {
-      this.$router.push({
-        path: "userDailyIndex",
-        query: { userType: this.userType },
-      });
+      //需要判断当天是否已经打卡
+      userDailyApi.getRecentRecord().then(response =>{
+          this.$router.push({
+              path: "userDailyIndex",
+              query: { record: response.data.healthyRecord },
+          });
+      })
     },
     getRowKey(row) {
       return row.id;
@@ -241,6 +245,7 @@ export default {
           userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getHealthyRecordList();
+            this.isSelected=false
           });
         })
         .catch(() => {

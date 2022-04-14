@@ -8,20 +8,20 @@ export default {
     let url = `/zzysbishe/returnWorkApplication/getWorkApplicationList/`+page+`/`+limit+`?applyDate=`+applyDate
     return request.get(url)
   },
-  addHealthyRecord(healthyRecord){
-    let url = `/zzysbishe/healthyRecord/addHealthyRecord`
-    return request.post(url,healthyRecord)
+  addReturnApplication(returnApplication){
+    let url = `/zzysbishe/returnWorkApplication/addReturnApplication`
+    return request.post(url,returnApplication)
   },
-  getHealthyRecordInfo(recordId){
-    let url = `/zzysbishe/healthyRecord/getHealthyRecordInfo/`+recordId
+  getReturnApplication(id){
+    let url = `/zzysbishe/returnWorkApplication/getReturnApplication/`+id
     return request.get(url)
   },
-  updateHealthyRecord(healthyRecord){
-    let url = `/zzysbishe/healthyRecord/updateHealthyRecord`
-    return request.put(url,healthyRecord)
+  updateReturnApplication(returnApplication,id){
+    let url = `/zzysbishe/returnWorkApplication/updateReturnApplication/`+id
+    return request.put(url,returnApplication)
   },
-  deleteHealthyRecord(uuids){
-    let url= `/zzysbishe/healthyRecord/deleteHealthyRecord/`+uuids
+  deleteReturnApplication(uuids){
+    let url= `/zzysbishe/returnWorkApplication/deleteReturnApplication/`+uuids
     return request.remove(url)
   },
   getUserInfo(){

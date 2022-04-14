@@ -23,6 +23,10 @@ export default {
   deleteHealthyRecord(uuids){
     let url= `/zzysbishe/healthyRecord/deleteHealthyRecord/`+uuids
     return request.remove(url)
+  },
+  getRecentRecord(){
+    let url= `/zzysbishe/healthyRecord/getRecentRecord/`
+    return request.get(url)
   }
   
 }

@@ -54,7 +54,11 @@
           新增
         </el-button>
 
-        <el-button @click="deleteEmpType" size="small">
+        <el-button
+          @click="deleteEmpType"
+          size="small"
+          :disabled="this.multipleSelection.length === 0"
+        >
           <i class="el-icon-delete"></i>
           删除
         </el-button>
@@ -152,23 +156,28 @@ export default {
   created() {
     this.getWorkApplicationList();
   },
+  mounted() {
+   this.getWorkApplicationList();
+  },
   methods: {
     addEmpType() {
       this.$router.push({
-        path: "returnIndex",
-        query: { userType: this.userType },
+        path: "returnIndex"
       });
     },
     getRowKey(row) {
       return row.uuid;
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.multipleSelection = val;
+      this.ids = this.multipleSelection .map((item) => {
+        return item.uuid
+      })
     },
     modify(uuid) {
       this.$router.push({
         path: "returnIndex",
-        query: { recordId: uuid, gai: 1 },
+        query: { id: uuid, gai: 1 },
       });
     },
     filterTag(value, row) {
@@ -181,7 +190,7 @@ export default {
       this.applyDate = ""
       this.getWorkApplicationList();
     },
-    deleteEmpType() {
+     deleteEmpType() {
       //批量删除的方法
       if (this.multipleSelection == [] ||
         this.multipleSelection.length == 0) {
@@ -195,9 +204,10 @@ export default {
       })
         .then(() => {
           //参数
-          userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
+          returnWorkApi.deleteReturnApplication(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getWorkApplicationList();
+            this.isSelected=false
           });
         })
         .catch(() => {
@@ -208,7 +218,7 @@ export default {
         });
     },
     search(){
-      this.getHealthyRecordList()
+      this.getWorkApplicationList()
     },
     getWorkApplicationList() {
       returnWorkApi
@@ -221,7 +231,8 @@ export default {
             this.total = response.data.total;
             this.pageSize = response.data.size;
           } else {
-            this.$message.warning("暂无打卡记录");
+            this.tableData=[]
+            this.$message.warning("暂无申请记录");
           }
         });
     },

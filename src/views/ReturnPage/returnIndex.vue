@@ -28,7 +28,7 @@
           <el-input v-model="form.phone" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="公司/学校" prop="unitId">
-          <el-select v-model="form.unitId" placeholder="请选择公司/学校">
+          <el-select v-model="form.unitId" placeholder="请选择公司/学校" :disabled="true">
              <el-option 
             v-for="item in options"
             :key="item.uuid"
@@ -40,8 +40,8 @@
             <el-option label="宁波大学" value="qq"></el-option> -->
           </el-select>
         </el-form-item>
-        <el-form-item label="工号/学号" prop="number">
-          <el-input v-model="form.number"></el-input>
+        <el-form-item label="工号/学号" prop="number" >
+          <el-input v-model="form.number" :disabled="true"></el-input>
         </el-form-item>
 
         <!-- <el-form-item label="申请内容">
@@ -56,7 +56,7 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="备注说明">
-          <el-input type="textarea" v-model="form.desc"></el-input>
+          <el-input type="textarea" v-model="form.remark"></el-input>
         </el-form-item>
 
         <el-form-item class="btn">
@@ -66,7 +66,7 @@
           <el-button v-show="this.gai == 1" type="primary" @click="modify"
             >修改完成</el-button
           >
-          <el-button>取消</el-button>
+          <!-- <el-button>取消</el-button> -->
         </el-form-item>
       </el-form>
     </div>
@@ -80,35 +80,23 @@ export default {
     return {
       options: "",
       optionsCopy:"",
+      id:"",
       form: {
+        userId:"",
         userName:"",
         phone:"",
-        unit:"",
+        unitId:"",
         number:"",
         applyTime:"",
         remark:""
       },
-      regionList: [
-        {
-          value: "1",
-          name: "宁波大学",
-        },
-        {
-          value: "2",
-          name: "浙江万里学院",
-        },
-        {
-          value: "3",
-          name: "宁波财经学院",
-        },
-      ],
       gai: null,
       rules: {
         // userName: [{ required: true, message: "请输入", trigger: "blur" }],
         // phone: [{ required: true, message: "请输入", trigger: "blur" }],
-        unitId: [{ required: true, message: "请选择", trigger: "change" }],
-        number: [{ required: true, message: "请输入", trigger: "blur" }],
-        applyTime: [{ required: true, message: "请选择", trigger: "change" }],
+        // unitId: [{ required: true, message: "请选择", trigger: "change" }],
+        // number: [{ required: true, message: "请输入", trigger: "blur" }],
+        applyTime: [{ required: true, message: "请选择", trigger: "blur" }],
       },
     };
   },
@@ -118,7 +106,12 @@ export default {
   },
   mounted() {
     this.gai = this.$route.query.gai;
-    console.log(this.gai);
+    if(this.gai==1){
+      this.id=this.$route.query.id
+      this.getReturnApplication()
+      console.log("gai"+this.gai);
+    }
+    
   },
   methods: {
     goBack() {
@@ -126,7 +119,12 @@ export default {
     },
     getUserInfo(){
       returnWorkApi.getUserInfo().then(response=>{
-        this.form = response.data.userInfo
+        this.form.userName = response.data.userInfo.userName
+        this.form.userId = response.data.userInfo.uuid
+        this.form.unitId = response.data.userInfo.unitId
+        this.form.number = response.data.userInfo.number
+        this.form.phone = response.data.userInfo.phone
+        console.log(this.form)
       })
     },
     getUnitList(){
@@ -149,46 +147,45 @@ export default {
       }
     },
     save() {
+      debugger
+      console.log(this.form)
       this.$refs["form"].validate((valid) => {
-        this.addHealthyRecord();
+        this.addReturnApplication();
       });
     },
     modify() {
       this.$refs["form"].validate((valid) => {
-        this.updateHealthyRecord();
+        this.updateReturnApplication();
       });
     },
-    addHealthyRecord() {
-      userDailyApi.addHealthyRecord(this.form).then((response) => {
+    addReturnApplication() {
+      returnWorkApi.addReturnApplication(this.form).then((response) => {
         if (response.code == 20000) {
+          this.$message.success("添加成功");
           setTimeout(() => {
-            this.$message.success("添加成功");
+            this.$router.push({
+              path: "returnList"
+            });
           }, 3000);
-          this.$router.push({
-            path: "userDailyList",
-            query: { userType: this.userType },
-          });
         }
       });
     },
-    getHealthyRecordInfo() {
-      userDailyApi.getHealthyRecordInfo(this.recordId).then((response) => {
+    getReturnApplication() {
+      returnWorkApi.getReturnApplication(this.id).then((response) => {
         if (response.code == 20000) {
-          this.form = response.data.healthyRecord;
+          this.form = response.data.application;
         }
       });
     },
-    updateHealthyRecord() {
-      console.log(this.form);
-      userDailyApi.updateHealthyRecord(this.form).then((response) => {
+    updateReturnApplication() {
+      returnWorkApi.updateReturnApplication(this.form,this.id).then((response) => {
         if (response.code == 20000) {
+          this.$message.success("修改成功");
           setTimeout(() => {
-            this.$message.success("修改成功");
+            this.$router.push({
+              path: "returnList",
+            });
           }, 3000);
-          this.$router.push({
-            path: "userDailyList",
-            query: { userType: this.userType },
-          });
         }
       });
     },
