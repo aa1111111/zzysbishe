@@ -31,10 +31,10 @@
         :rules="rules"
       >
         <el-form-item label="申请人" prop="name">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="form.phone"></el-input>
+          <el-input v-model="form.phone" :disabled="true"></el-input>
         </el-form-item>
 
         <p class="zs">部门信息</p>
@@ -181,8 +181,8 @@ export default {
       ],
       gai: null,
       rules: {
-        name: [{ required: true, message: "请输入", trigger: "blur" }],
-        phone: [{ required: true, message: "请输入", trigger: "blur" }],
+        // name: [{ required: true, message: "请输入", trigger: "blur" }],
+        // phone: [{ required: true, message: "请输入", trigger: "blur" }],
         region: [{ required: true, message: "请选择", trigger: "change" }],
         idcard: [{ required: true, message: "请输入", trigger: "blur" }],
         lb: [{ required: true, message: "请选择", trigger: "change" }],
@@ -218,7 +218,7 @@ export default {
             this.$message.success("添加成功");
           }, 3000);
           this.$router.push({
-            path: "userDailyList",
+            path: "gooutList",
             query: { userType: this.userType },
           });
         }
@@ -239,7 +239,7 @@ export default {
             this.$message.success("修改成功");
           }, 3000);
           this.$router.push({
-            path: "userDailyList",
+            path: "gooutList",
             query: { userType: this.userType },
           });
         }

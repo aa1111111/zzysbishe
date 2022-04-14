@@ -160,7 +160,7 @@ export default {
   methods: {
     addEmpType() {
       this.$router.push({
-        path: "userDailyIndex",
+        path: "gooutIndex",
         query: { userType: this.userType },
       });
     },

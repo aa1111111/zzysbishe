@@ -106,9 +106,9 @@ export default {
       rules: {
         // userName: [{ required: true, message: "请输入", trigger: "blur" }],
         // phone: [{ required: true, message: "请输入", trigger: "blur" }],
-        region: [{ required: true, message: "请选择", trigger: "change" }],
-        idcard: [{ required: true, message: "请输入", trigger: "blur" }],
-        date1: [{ required: true, message: "请输入", trigger: "change" }],
+        unitId: [{ required: true, message: "请选择", trigger: "change" }],
+        number: [{ required: true, message: "请输入", trigger: "blur" }],
+        applyTime: [{ required: true, message: "请选择", trigger: "change" }],
       },
     };
   },
