@@ -71,7 +71,7 @@
         highlight-current-row
         height="300"
         ref="table"
-         :row-key="getRowKey"
+        :row-key="getRowKey"
         @selection-change="handleSelectionChange"
         :header-cell-style="{ background: '#659798', color: 'white' }"
         style="width: 100%"
@@ -117,9 +117,18 @@
         </el-table-column>
         <el-table-column prop="reason" label="外出原因" fixed align="center">
         </el-table-column>
-        <el-table-column prop="leaveStartTime" label="外出时间" fixed align="center">
+        <el-table-column
+          prop="leaveStartTime"
+          label="外出时间"
+          fixed
+          align="center"
+        >
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status == 0">未通过</span>
+            <span v-if="scope.row.status == 1">已通过</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="msgBack"
@@ -164,7 +173,7 @@ export default {
   created() {
     this.getOutApplicationList();
   },
-  activated(){
+  activated() {
     this.getOutApplicationList();
   },
   methods: {
@@ -176,11 +185,11 @@ export default {
     getRowKey(row) {
       return row.id;
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.multipleSelection = val;
-      this.ids = this.multipleSelection .map((item) => {
-        return item.uuid
-      })
+      this.ids = this.multipleSelection.map((item) => {
+        return item.uuid;
+      });
     },
     modify(uuid) {
       this.$router.push({
@@ -195,13 +204,12 @@ export default {
       return row.condition === value;
     },
     reset() {
-      this.applyDate = ""
+      this.applyDate = "";
       this.getOutApplicationList();
     },
     deleteEmpType() {
       //批量删除的方法
-      if (this.multipleSelection == [] ||
-        this.multipleSelection.length == 0) {
+      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
         this.$message.info("请选择要删除的数据");
         return;
       }
@@ -215,7 +223,7 @@ export default {
           goOutApi.deleteOutApplication(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getOutApplicationList();
-            this.isSelected=false
+            this.isSelected = false;
           });
         })
         .catch(() => {
@@ -225,8 +233,8 @@ export default {
           });
         });
     },
-    search(){
-      this.getOutApplicationList()
+    search() {
+      this.getOutApplicationList();
     },
     getOutApplicationList() {
       goOutApi
@@ -239,9 +247,9 @@ export default {
             this.total = response.data.total;
             this.pageSize = response.data.size;
           } else {
-            this.tableData=[]
+            this.tableData = [];
             this.$message.warning(response.message);
-            this.$router.push({path:"login"})
+            this.$router.push({ path: "login" });
           }
         });
     },

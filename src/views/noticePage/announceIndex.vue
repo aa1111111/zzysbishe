@@ -20,12 +20,17 @@
           ><div class="tp">
             <img src="../../assets/public_images/laba.jpg" alt="" /></div
         ></el-col>
-        <el-col :span="20"
+        <el-col :span="20"></el-col>
+          <el-link
+            href="https://k.sina.com.cn/article_7517400647_1c0126e4705901sn5n.html"
+            target="_blank"
           >
-          <el-link href="https://k.sina.com.cn/article_7517400647_1c0126e4705901sn5n.html" target="_blank">
-          <div class="title">【通知公告】{{ item.announcementTitle }}</div></el-link>
-          
-          <div class="nr">{{item.releaseTime}}</div>
+            <div class="title">
+              【通知公告】{{ item.announcementTitle }}
+            </div></el-link
+          >
+
+          <div class="nr">{{ item.releaseTime }}</div>
           <div class="nr">{{ item.announcementContent }}</div></el-col
         >
       </el-row>
@@ -44,44 +49,45 @@
   </div>
 </template>
 <script>
-import noticeApi from '../../api/noticeList';
+import noticeApi from "../../api/noticeList";
 export default {
   data() {
     return {
       currentPage: 1, //初始页
       pagesize: 5, //    每页的数据
-      assessList: [
-      ],
-      total:0,
+      assessList: [],
+      total: 0,
       userType: null,
     };
   },
-   methods: {
+  methods: {
     // 初始页currentPage、初始每页数据数pagesize和数据data
-    handleSizeChange: function(size) {
+    handleSizeChange: function (size) {
       this.pagesize = size; //当前显示页数
       console.log(this.pagesize); //每页下拉显示数据
     },
-    handleCurrentChange: function(currentPage) {
+    handleCurrentChange: function (currentPage) {
       this.currentPage = currentPage; //第几页
       console.log(this.currentPage); //点击第几页
     },
-    getAnnouncementList(){
-      noticeApi.getAnnouncementList(this.currentPage,this.pagesize).then(response =>{
-        if(response.code === 20000){
-          this.assessList = response.data.items
-          this.total = response.data.total
-          console.log("total="+this.total);
-        }else{
-          this.$message.warning(response.message)
-          this.$router.push({path:"login"})
-        }
-      })
-    }
+    getAnnouncementList() {
+      noticeApi
+        .getAnnouncementList(this.currentPage, this.pagesize)
+        .then((response) => {
+          if (response.code === 20000) {
+            this.assessList = response.data.items;
+            this.total = response.data.total;
+            console.log("total=" + this.total);
+          } else {
+            this.$message.warning(response.message);
+            this.$router.push({ path: "login" });
+          }
+        });
+    },
   },
-  created(){
+  created() {
     this.getAnnouncementList();
-    console.log("11111")
+    console.log("11111");
   },
   mounted() {
     this.userType = this.$route.query.userType;

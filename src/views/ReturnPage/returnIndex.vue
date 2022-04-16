@@ -22,25 +22,38 @@
         :rules="rules"
       >
         <el-form-item label="申请人" prop="userName">
-          <el-input v-model="form.userName" auto-complete="off" :disabled="true"></el-input>
+          <el-input
+            v-model="form.userName"
+            auto-complete="off"
+            :disabled="true"
+          ></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="form.phone" auto-complete="off" :disabled="true"></el-input>
+          <el-input
+            v-model="form.phone"
+            auto-complete="off"
+            :disabled="true"
+          ></el-input>
         </el-form-item>
         <el-form-item label="公司/学校" prop="unitId">
-          <el-select v-model="form.unitId" placeholder="请选择公司/学校" :disabled="true">
-             <el-option 
-            v-for="item in options"
-            :key="item.uuid"
-            :label="item.unitName"
-            :value="item.uuid">
+          <el-select
+            v-model="form.unitId"
+            placeholder="请选择公司/学校"
+            :disabled="true"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.uuid"
+              :label="item.unitName"
+              :value="item.uuid"
+            >
             </el-option>
             <!-- <el-option label="宁波财经学院" value="shanghai"></el-option>
             <el-option label="浙江万里学院" value="beijing"></el-option>
             <el-option label="宁波大学" value="qq"></el-option> -->
           </el-select>
         </el-form-item>
-        <el-form-item label="工号/学号" prop="number" >
+        <el-form-item label="工号/学号" prop="number">
           <el-input v-model="form.number" :disabled="true"></el-input>
         </el-form-item>
 
@@ -79,16 +92,16 @@ export default {
   data() {
     return {
       options: "",
-      optionsCopy:"",
-      id:"",
+      optionsCopy: "",
+      id: "",
       form: {
-        userId:"",
-        userName:"",
-        phone:"",
-        unitId:"",
-        number:"",
-        applyTime:"",
-        remark:""
+        userId: "",
+        userName: "",
+        phone: "",
+        unitId: "",
+        number: "",
+        applyTime: "",
+        remark: "",
       },
       gai: null,
       rules: {
@@ -106,49 +119,53 @@ export default {
   },
   mounted() {
     this.gai = this.$route.query.gai;
-    if(this.gai==1){
-      this.id=this.$route.query.id
-      this.getReturnApplication()
-      console.log("gai"+this.gai);
+    if (this.gai == 1) {
+      this.id = this.$route.query.id;
+      this.getReturnApplication();
+      console.log("gai" + this.gai);
     }
-    
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
-    getUserInfo(){
-      returnWorkApi.getUserInfo().then(response=>{
-        this.form.userName = response.data.userInfo.userName
-        this.form.userId = response.data.userInfo.uuid
-        this.form.unitId = response.data.userInfo.unitId
-        this.form.number = response.data.userInfo.number
-        this.form.phone = response.data.userInfo.phone
-        console.log(this.form)
-      })
+    getUserInfo() {
+      returnWorkApi.getUserInfo().then((response) => {
+        this.form.userName = response.data.userInfo.userName;
+        this.form.userId = response.data.userInfo.uuid;
+        this.form.unitId = response.data.userInfo.unitId;
+        this.form.number = response.data.userInfo.number;
+        this.form.phone = response.data.userInfo.phone;
+        console.log(this.form);
+      });
     },
-    getUnitList(){
-      loginApi.getUnitList().then(response =>{
-        console.log(response.data.unitList)
-        this.options = response.data.unitList
-        this.optionsCopy = response.data.unitList
-      })
+    getUnitList() {
+      loginApi.getUnitList().then((response) => {
+        console.log(response.data.unitList);
+        this.options = response.data.unitList;
+        this.optionsCopy = response.data.unitList;
+      });
     },
     dataFilter(val) {
       this.value = val;
-      if (val) { //val存在
+      if (val) {
+        //val存在
         this.options = this.optionsCopy.filter((item) => {
-          if (!!~item.unitName.indexOf(val) || !!~item.unitName.toUpperCase().indexOf(val.toUpperCase())) {
-            return true
+          if (
+            !!~item.unitName.indexOf(val) ||
+            !!~item.unitName.toUpperCase().indexOf(val.toUpperCase())
+          ) {
+            return true;
           }
-        })
-      } else { //val为空时，还原数组
+        });
+      } else {
+        //val为空时，还原数组
         this.options = this.optionsCopy;
       }
     },
     save() {
-      debugger
-      console.log(this.form)
+      debugger;
+      console.log(this.form);
       this.$refs["form"].validate((valid) => {
         this.addReturnApplication();
       });
@@ -164,7 +181,7 @@ export default {
           this.$message.success("添加成功");
           setTimeout(() => {
             this.$router.push({
-              path: "returnList"
+              path: "returnList",
             });
           }, 3000);
         }
@@ -174,25 +191,27 @@ export default {
       returnWorkApi.getReturnApplication(this.id).then((response) => {
         if (response.code == 20000) {
           this.form = response.data.application;
-        }else{
-          this.$message.warning(response.message)
+        } else {
+          this.$message.warning(response.message);
           this.$router.push({
-              path: "returnList"
-            })
+            path: "returnList",
+          });
         }
       });
     },
     updateReturnApplication() {
-      returnWorkApi.updateReturnApplication(this.form,this.id).then((response) => {
-        if (response.code == 20000) {
-          this.$message.success("修改成功");
-          setTimeout(() => {
-            this.$router.push({
-              path: "returnList",
-            });
-          }, 3000);
-        }
-      });
+      returnWorkApi
+        .updateReturnApplication(this.form, this.id)
+        .then((response) => {
+          if (response.code == 20000) {
+            this.$message.success("修改成功");
+            setTimeout(() => {
+              this.$router.push({
+                path: "returnList",
+              });
+            }, 3000);
+          }
+        });
     },
   },
 };

@@ -113,6 +113,10 @@
         <el-table-column prop="remark" label="备注说明" fixed align="center">
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status == 0">未通过</span>
+            <span v-if="scope.row.status == 1">已通过</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="msgBack"
@@ -123,7 +127,9 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="modify(scope.row.uuid)">修改</el-button>
+            <el-button type="text" size="small" @click="modify(scope.row.uuid)"
+              >修改</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -156,23 +162,23 @@ export default {
   created() {
     this.getWorkApplicationList();
   },
-  activated(){
-   this.getWorkApplicationList();
+  activated() {
+    this.getWorkApplicationList();
   },
   methods: {
     addEmpType() {
       this.$router.push({
-        path: "returnIndex"
+        path: "returnIndex",
       });
     },
     getRowKey(row) {
       return row.uuid;
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.multipleSelection = val;
-      this.ids = this.multipleSelection .map((item) => {
-        return item.uuid
-      })
+      this.ids = this.multipleSelection.map((item) => {
+        return item.uuid;
+      });
     },
     modify(uuid) {
       this.$router.push({
@@ -187,13 +193,12 @@ export default {
       return row.condition === value;
     },
     reset() {
-      this.applyDate = ""
+      this.applyDate = "";
       this.getWorkApplicationList();
     },
-     deleteEmpType() {
+    deleteEmpType() {
       //批量删除的方法
-      if (this.multipleSelection == [] ||
-        this.multipleSelection.length == 0) {
+      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
         this.$message.info("请选择要删除的数据");
         return;
       }
@@ -205,12 +210,12 @@ export default {
         .then(() => {
           //参数
           returnWorkApi.deleteReturnApplication(this.ids).then((response) => {
-            if(response.code ==20000){
+            if (response.code == 20000) {
               this.$message.success("删除成功");
               this.getWorkApplicationList();
-              this.isSelected=false
-            }else{
-              this.$message.warning(response.message)
+              this.isSelected = false;
+            } else {
+              this.$message.warning(response.message);
               this.$router.push({ name: "login" });
             }
           });
@@ -222,8 +227,8 @@ export default {
           });
         });
     },
-    search(){
-      this.getWorkApplicationList()
+    search() {
+      this.getWorkApplicationList();
     },
     getWorkApplicationList() {
       returnWorkApi
@@ -236,7 +241,7 @@ export default {
             this.total = response.data.total;
             this.pageSize = response.data.size;
           } else {
-            this.tableData=[]
+            this.tableData = [];
             this.$message.warning(response.message);
           }
         });

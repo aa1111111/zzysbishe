@@ -52,12 +52,18 @@
           ></v-distpicker>
         </el-form-item>
         <el-form-item label="所在公司/学校" prop="unit">
-          <el-select v-model="form.unitId" placeholder="请选择公司/学校" filterable :filter-method="dataFilter">
-            <el-option 
-            v-for="item in options"
-            :key="item.uuid"
-            :label="item.unitName"
-            :value="item.uuid">
+          <el-select
+            v-model="form.unitId"
+            placeholder="请选择公司/学校"
+            filterable
+            :filter-method="dataFilter"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.uuid"
+              :label="item.unitName"
+              :value="item.uuid"
+            >
             </el-option>
           </el-select>
         </el-form-item>
@@ -95,7 +101,7 @@ export default {
       active: 0,
       userType: null,
       options: "",
-      optionsCopy:"",
+      optionsCopy: "",
       addressprovince: "",
       addresscity: "",
       addressdist: "",
@@ -105,7 +111,7 @@ export default {
         address: "",
         unitId: "",
         number: "",
-        email:""
+        email: "",
       },
       // 表单验证，需要在 el-form-item 元素中增加 prop 属性
       rules: {
@@ -124,9 +130,7 @@ export default {
         number: [
           { required: true, message: "请输入学号/工号", trigger: "blur" },
         ],
-        email: [
-          { required: true, message: "请输入邮箱", trigger: "blur" },
-        ]
+        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }],
       },
     };
   },
@@ -141,17 +145,18 @@ export default {
       this.addressprovince = data.province.value;
       this.addresscity = data.city.value;
       this.addressdist = data.area.value;
-      this.form.address = this.addressprovince + this.addresscity + this.addressdist;
+      this.form.address =
+        this.addressprovince + this.addresscity + this.addressdist;
     },
     cancle() {
       this.form = {};
     },
     next1() {
-       if (this.form.realName === "") {
+      if (this.form.realName === "") {
         this.$message.warning("真实姓名不能为空");
       } else if (this.form.idCard === "") {
         this.$message.warning("身份证号不能为空");
-      }else{
+      } else {
         this.active = 1;
       }
     },
@@ -160,7 +165,11 @@ export default {
     },
     next2() {
       // debugger
-       if (this.form.addressprovince === "" && this.form.addresscity === "" && this.form.addressdist === "") {
+      if (
+        this.form.addressprovince === "" &&
+        this.form.addresscity === "" &&
+        this.form.addressdist === ""
+      ) {
         this.$message.warning("所在地不能为空");
       } else if (this.form.unitId === "") {
         this.$message.warning("单位不能为空");
@@ -168,36 +177,41 @@ export default {
         this.$message.warning("学号/工号不能为空");
       } else if (this.form.email === "") {
         this.$message.warning("邮箱不能为空");
-      } else{
-        loginApi.identify(this.form).then(response =>{
-          if(response.code == 20000){
+      } else {
+        loginApi.identify(this.form).then((response) => {
+          if (response.code == 20000) {
             this.active = 2;
             this.$router.push({ name: "index" });
-          }else{
+          } else {
             this.$message.warning(response.message);
           }
-        })
+        });
       }
     },
-    getUnitList(){
-      loginApi.getUnitList().then(response =>{
-        console.log(response.data.unitList)
-        this.options = response.data.unitList
-        this.optionsCopy = response.data.unitList
-      })
+    getUnitList() {
+      loginApi.getUnitList().then((response) => {
+        console.log(response.data.unitList);
+        this.options = response.data.unitList;
+        this.optionsCopy = response.data.unitList;
+      });
     },
     dataFilter(val) {
-        this.value = val;
-        if (val) { //val存在
-          this.options = this.optionsCopy.filter((item) => {
-            if (!!~item.unitName.indexOf(val) || !!~item.unitName.toUpperCase().indexOf(val.toUpperCase())) {
-              return true
-            }
-          })
-        } else { //val为空时，还原数组
-          this.options = this.optionsCopy;
-        }
+      this.value = val;
+      if (val) {
+        //val存在
+        this.options = this.optionsCopy.filter((item) => {
+          if (
+            !!~item.unitName.indexOf(val) ||
+            !!~item.unitName.toUpperCase().indexOf(val.toUpperCase())
+          ) {
+            return true;
+          }
+        });
+      } else {
+        //val为空时，还原数组
+        this.options = this.optionsCopy;
       }
+    },
   },
 };
 </script>

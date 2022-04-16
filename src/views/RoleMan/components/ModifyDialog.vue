@@ -50,42 +50,49 @@ export default {
       },
       dialogFormVisible: false,
       id: "",
-      type:"",
+      type: "",
     };
   },
   mounted() {},
   methods: {
-    onSelected(data) {
-    },
-    open(item,type) {
+    onSelected(data) {},
+    open(item, type) {
       this.id = item.id;
       this.type = type;
-      console.log(type)
-      this.form.a = item.shBranch;
+      console.log(type); //修改弹窗type=1
+      this.form.userName = item.patName;
+      this.form.realName = item.patName;
+      this.form.phone = item.patName;
       this.dialogFormVisible = true;
     },
     handleAdd() {
-      this.handleClose();
-      //   this.$refs["form"].validate((valid) => {
-      //     if (valid) {
-      //       let data = this.form
-      //       modShStatus(data).then((res) => {
-      //         if (res.code == 0) {
-      //           this.$message.success("审核完成");
-      //           this.$emit("refresh");
-      //           this.handleClose();
-      //         }
-      //       });
-      //     }
-      //   });
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          loginApi.modifyUserInfo(this.form).then((response) => {
+            if (response.code === 2) {
+              this.$message.success(response.message);
+              this.$emit("refresh");
+              this.handleClose();
+            }
+          });
+          // let data = this.form
+          // modShStatus(data).then((res) => {
+          //   if (res.code == 0) {
+          //     this.$message.success("审核完成");
+          //     this.$emit("refresh");
+          //     this.handleClose();
+          //   }
+          // });
+        }
+      });
     },
     handleClose() {
-      // if (this.$refs["form"]) {
-      //   this.$refs["form"].resetFields();
-      // }
+      if (this.$refs["form"]) {
+        this.$refs["form"].resetFields();
+      }
       this.dialogFormVisible = false;
-      //   this.form = [];
-      //   this.id = "";
+      this.form = [];
+      this.id = "";
     },
   },
 };

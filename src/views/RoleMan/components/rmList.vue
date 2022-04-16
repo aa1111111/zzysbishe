@@ -2,22 +2,10 @@
   <div>
     <div class="tool">
       <el-row>
-        <el-button
-          @click="addEmpType"
-          class="btnh"
-          style="
-            background-color: #e2a0c9;
-            color: #ffffff;
-            border-color: #e2a0c9;
-          "
-          size="small"
-        >
-          <i class="el-icon-circle-plus-outline"></i>
-          新增
-        </el-button>
         <el-col :span="21">
           <el-button
-            @click="auditEmpType"
+            @click="addEmpType"
+            class="btnh"
             style="
               background-color: #e2a0c9;
               color: #ffffff;
@@ -25,15 +13,17 @@
             "
             size="small"
           >
-            <i class="el-icon-delete"></i>
-            批量审核
+            <i class="el-icon-circle-plus-outline"></i>
+            新增
           </el-button>
-          <el-button @click="deleteEmpType" size="small">
-            <i class="el-icon-delete"></i>
+          <el-button
+            @click="deleteEmpType"
+            size="small"
+            :disabled="this.multipleSelection.length === 0"
+            ><i class="el-icon-delete"></i>
             删除
           </el-button>
         </el-col>
-        
       </el-row>
     </div>
     <div class="box2">
@@ -43,6 +33,8 @@
         highlight-current-row
         height="300"
         ref="table"
+        :row-key="getRowKey"
+        @selection-change="handleSelectionChange"
         :header-cell-style="{ background: '#994a8e', color: 'white' }"
         style="width: 100%"
       >
@@ -50,26 +42,15 @@
           type="selection"
           width="50"
           fixed
-          :reserve-selection="true"
+          :reserve-selection="isSelected"
           align="center"
         >
         </el-table-column>
-        <el-table-column
-          type="index"
-          label="序号"
-          fixed
-          align="center"
-        >
+        <el-table-column type="index" label="序号" fixed align="center">
         </el-table-column>
 
-        <el-table-column
-          prop="patName"
-          label="角色ID"
-          fixed
-          align="center"
-        >
+        <el-table-column prop="patName" label="角色ID" fixed align="center">
         </el-table-column>
-        
 
         <el-table-column
           prop="patAddress"
@@ -78,153 +59,108 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column
-          prop="tag"
-          label="备注"
-          fixed
-          align="center"
-        >
+        <el-table-column prop="tag" label="备注" fixed align="center">
         </el-table-column>
-        
-        
+
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleModify(scope.row,1)"
+            <el-button
+              type="text"
+              size="small"
+              @click="handleModify(scope.row, 1)"
               >修改</el-button
             >
           </template>
         </el-table-column>
       </el-table>
-    <modify-dialog ref="modifyDialog" @refresh="search(1)"></modify-dialog>
+      <modify-dialog ref="modifyDialog" @refresh="search(1)"></modify-dialog>
     </div>
     <div class="block">
-      <el-pagination layout="prev, pager, next" :total="50"> </el-pagination>
+      <el-pagination
+        layout="prev, pager, next"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :total="total"
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
 <script>
-import ModifyDialog from './ModifyDialog.vue';
+import ModifyDialog from "./ModifyDialog.vue";
 export default {
-    components:{
-      ModifyDialog,
-    },
+  components: {
+    ModifyDialog,
+  },
   data() {
     return {
-      tableData: [
-        {
-          clockTime: "2021-09-27 11:13:33",
-          patTemperature: "36.5",
-          patName: "王小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:15:15",
-          patTemperature: "35.9",
-          patName: "赵小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:11:28",
-          patName: "钱小虎",
-          patTemperature: "36.1",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:16:26",
-          patName: "孙小虎",
-          patTemperature: "36",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "未打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:11:25",
-          patName: "李小虎",
-          patTemperature: "36.8",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "已感染",
-          tag: "未打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:14:32",
-          patName: "周小虎",
-          patTemperature: "37",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:15:23",
-          patName: "吴小虎",
-          patTemperature: "36",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "未打卡",
-        },
-      ],
+      pageSize: 10,
+      currentPage: 1,
+      total: 0,
+      tableData: [],
+      multipleSelection: [],
       currentRow: null,
-      bodyList: [
-        {
-          value: 1,
-          name: "健康",
-        },
-        {
-          value: 0,
-          name: "已感染",
-        },
-      ],
-      searchQuery: {
-        idCard: "",
-        patName: "",
-        clockCon: [],
-        bodyCon: [],
-      },
-      clockList: [
-        {
-          value: 1,
-          name: "已打卡",
-        },
-        {
-          value: 0,
-          name: "未打卡",
-        },
-      ],
+      isSelected: true,
+      ids: [],
     };
   },
+  mounted() {
+    this.getManagerList();
+  },
   methods: {
-    handleModify(item,type) {
-      this.$refs.modifyDialog.open(item,type);
+    getRowKey(row) {
+      return row.id;
     },
-    filterTag(value, row) {
-      return row.tag === value;
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      this.ids = this.multipleSelection.map((item) => {
+        //删除这里需要把uuid改成别的
+        return item.uuid;
+      });
     },
-    filterCon(value, row) {
-      return row.condition === value;
-    },
-    auditEmpType() {
-    },
-    reset() {
-      (this.searchQuery = {
-        idCard: "",
-        patName: "",
-        clockCon: [],
-        bodyCon: [],
-      }),
-        (this.createDataRange = []);
-      this.modifyDataRange = [];
-      this.search();
+    handleModify(item, type) {
+      this.$refs.modifyDialog.open(item, type);
     },
     addEmpType() {
       this.$refs.modifyDialog.open(1);
     },
     deleteEmpType() {
-      console.log(2);
+      //批量删除的方法
+      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
+        this.$message.info("请选择要删除的数据");
+        return;
+      }
+      this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //参数
+          userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
+            this.$message.success("删除成功");
+            this.getHealthyRecordList();
+            this.isSelected = false;
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    getManagerList() {
+      adApi.getManagerList(this.userName).then((response) => {
+        if (response.code === 20000) {
+          this.tableData = response.data.manager;
+        } else {
+          this.$message.warning(response.message);
+        }
+      });
+    },
+    search() {
+      this.getManagerList();
     },
   },
 };

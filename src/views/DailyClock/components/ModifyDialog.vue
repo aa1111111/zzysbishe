@@ -41,7 +41,10 @@
           </el-input>
         </el-form-item>
       </el-form> -->
-      <div class="form" style="padding-bottom:10px">{{form.name}}<div style="float: left; padding-right:20px;">姓名：</div></div>
+      <div class="form" style="padding-bottom: 10px">
+        {{ form.name }}
+        <div style="float: left; padding-right: 20px">姓名：</div>
+      </div>
       <el-form
         label-position="top"
         ref="form"
@@ -51,72 +54,92 @@
       >
         <el-form-item label="1.目前所在地区">
           <v-distpicker
+            :disabled="disabled"
             :province="form.addressprovince"
             :city="form.addresscity"
-            :area="form.address__dist"
+            :area="form.addressdist"
             @selected="onSelected"
           ></v-distpicker>
         </el-form-item>
         <el-form-item
-          label="2.过去21天是否健康（如果21天内有过发烧情况，请选择有发烧、咳嗽等症状）" prop="a"
+          label="2.过去21天是否健康（如果21天内有过发烧情况，请选择有发烧、咳嗽等症状）"
+          prop="isHealthy"
         >
-          <el-radio-group v-model="form.a">
-            <el-radio label="健康"></el-radio>
-            <el-radio label="有发烧、咳嗽等症状"></el-radio>
+          <el-radio-group v-model="form.isHealthy" :disabled="disabled">
+            <el-radio :label="0">健康</el-radio>
+            <el-radio :label="1">有发烧、咳嗽等症状</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="3.过去21天是否有涉及中高风险地区的旅居史" prop="b">
-          <el-radio-group v-model="form.b">
-            <el-radio label="否"></el-radio>
-            <el-radio label="是，过去21天有涉及中风险地区旅居史"></el-radio>
-            <el-radio label="是，过去21天有涉及高风险地区/封闭管理"></el-radio>
+        <el-form-item
+          label="3.过去21天是否有涉及中高风险地区的旅居史"
+          prop="hasTravelMediumHighRiskAreas"
+        >
+          <el-radio-group
+            v-model="form.hasTravelMediumHighRiskAreas"
+            :disabled="disabled"
+          >
+            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">是，过去21天有涉及中风险地区旅居史</el-radio>
+            <el-radio :label="2"
+              >是，过去21天有涉及高风险地区/封闭管理</el-radio
+            >
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="4.过去21天是否有国外或港台的旅居史" prop="c">
-          <el-radio-group v-model="form.c"
+        <el-form-item
+          label="4.过去21天是否有国外或港台的旅居史"
+          prop="hasTravelAbroad"
+        >
+          <el-radio-group v-model="form.hasTravelAbroad" :disabled="disabled"
             >'
-            <el-radio label="否"></el-radio>
-            <el-radio label="是"></el-radio>
+            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">是</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item
-          label="5.过去21天是否接触过新型冠状病毒确诊患者/无症状感染者/核酸检测为阳性者" prop="d"
+          label="5.过去21天是否接触过新型冠状病毒确诊患者/无症状感染者/核酸检测为阳性者"
+          prop="contact"
         >
-          <el-radio-group v-model="form.d">
-            <el-radio label="否"></el-radio>
-            <el-radio label="是"></el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="6.目前是否被所在街道/社区等部门要求居家/集中隔离" prop="e">
-          <el-radio-group v-model="form.e">
-            <el-radio label="否"></el-radio>
-            <el-radio label="是"></el-radio>
+          <el-radio-group v-model="form.contact" :disabled="disabled">
+            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">是</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item
-          label="7.目前是否是新型冠状病毒阳性（确诊）患者/正处于疑似待排查期间或曾是新型冠状病毒确诊患者/无症状感染者痊愈不足90天" prop="f"
+          label="6.目前是否被所在街道/社区等部门要求居家/集中隔离"
+          prop="isolation"
         >
-          <el-radio-group v-model="form.f">
-            <el-radio label="否"></el-radio>
-            <el-radio label="是"></el-radio>
+          <el-radio-group v-model="form.isolation" :disabled="disabled">
+            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">是</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item
-          label="8.是否有病愈/隔离期满/涉及风险地区行程后，通过核酸检测（未诊断阳性或未被隔离的同学请选择“未检测”，检测结果未出前请选择“未检测”）" prop="g"
+          label="7.目前是否是新型冠状病毒阳性（确诊）患者/正处于疑似待排查期间或曾是新型冠状病毒确诊患者/无症状感染者痊愈不足90天"
+          prop="infection"
         >
-          <el-radio-group v-model="form.g">
-            <el-radio label="未检测（含不需要检测）"></el-radio>
-            <el-radio label="已通过"></el-radio>
-            <el-radio label="未通过"></el-radio>
+          <el-radio-group v-model="form.infection" :disabled="disabled">
+            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">是</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="9.是否已接种新冠疫苗" prop="h">
-          <el-radio-group v-model="form.h">
-            <el-radio label="未注射新冠疫苗"></el-radio>
-            <el-radio label="未完成，但已注射部分阶段新冠疫苗"></el-radio>
-            <el-radio label="已完成注射新冠疫苗"></el-radio>
-          </el-radio-group> </el-form-item
-      ></el-form>
+        <el-form-item
+          label="8.是否有病愈/隔离期满/涉及风险地区行程后，通过核酸检测（未诊断阳性或未被隔离的同学请选择“未检测”，检测结果未出前请选择“未检测”）"
+          prop="hasTested"
+        >
+          <el-radio-group v-model="form.hasTested" :disabled="disabled">
+            <el-radio :label="0">未检测（含不需要检测）</el-radio>
+            <el-radio :label="1">已通过</el-radio>
+            <el-radio :label="2">未通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="9.是否已接种新冠疫苗" prop="isVaccination">
+          <el-radio-group v-model="form.isVaccination" :disabled="disabled">
+            <el-radio :label="0">未注射新冠疫苗</el-radio>
+            <el-radio :label="1">未完成，但已注射部分阶段新冠疫苗</el-radio>
+            <el-radio :label="2">已完成注射新冠疫苗</el-radio>
+          </el-radio-group>
+        </el-form-item></el-form
+      >
       <div slot="footer" class="dialog-footer" style="text-align: center">
         <div>
           <el-button
@@ -134,84 +157,156 @@
   </div>
 </template>
 <script>
+import userDailyApi from "../../../api/userDaily";
 export default {
   data() {
     return {
+      date: "",
+      addressprovince: "",
+      addresscity: "",
+      addressdist: "",
+      disabled: "",
       form: {
-          name:"王小虎",
-        addressprovince: "浙江省",
-        addresscity: "宁波市",
-        address__dist: "鄞州区",
-        a: "健康",
-        b: "否",
-        c: "否",
-        d: "否",
-        e: "否",
-        f: "否",
-        g: "未检测",
-        h: "已完全注射新冠疫苗",
+        currentLocation: "",
+        isHealthy: null,
+        hasTravelMediumHighRiskAreas: null,
+        hasTravelAbroad: null,
+        contact: null,
+        isolation: null,
+        infection: null,
+        hasTested: null,
+        isVaccination: null,
       },
+      recordId: "",
+      gai: null,
       rules: {
-        // addressprovince: [
-        //   { required: true, message: "请选择省份", trigger: "blur" },
-        // ],
-        // addresscity: [{ required: true, message: "请选择市", trigger: "blur" }],
-        // address__dist: [
-        //   { required: true, message: "请选择区", trigger: "blur" },
-        // ],
-        a: [{ required: true, message: "请选择", trigger: "blur" }],
-        b: [{ required: true, message: "请选择", trigger: "blur" }],
-        c: [{ required: true, message: "请选择", trigger: "blur" }],
-        d: [{ required: true, message: "请选择", trigger: "blur" }],
-        e: [{ required: true, message: "请选择", trigger: "blur" }],
-        f: [{ required: true, message: "请选择", trigger: "blur" }],
-        g: [{ required: true, message: "请选择", trigger: "blur" }],
-        h: [{ required: true, message: "请选择", trigger: "blur" }],
+        currentLocation: [
+          { required: true, message: "请选择", trigger: "blur" },
+        ],
+        isHealthy: [{ required: true, message: "请选择", trigger: "blur" }],
+        hasTravelMediumHighRiskAreas: [
+          { required: true, message: "请选择", trigger: "blur" },
+        ],
+        hasTravelAbroad: [
+          { required: true, message: "请选择", trigger: "blur" },
+        ],
+        contact: [{ required: true, message: "请选择", trigger: "blur" }],
+        isolation: [{ required: true, message: "请选择", trigger: "blur" }],
+        infection: [{ required: true, message: "请选择", trigger: "blur" }],
+        hasTested: [{ required: true, message: "请选择", trigger: "blur" }],
+        isVaccination: [{ required: true, message: "请选择", trigger: "blur" }],
       },
       dialogFormVisible: false,
       id: "",
     };
   },
+  mounted() {
+    if (this.$route.query.record != null) {
+      this.form = this.$route.query.record;
+      this.addressprovince =
+        this.$route.query.record.currentLocation.split("-")[0];
+      console.log("省：" + this.addressprovince);
+      this.addresscity = this.$route.query.record.currentLocation.split("-")[1];
+      console.log("市：" + this.addresscity);
+      this.addressdist = this.$route.query.record.currentLocation.split("-")[2];
+      console.log("区：" + this.addressdist);
+      this.disabled = "disabled";
+    }
+    this.getHealthyRecordInfo();
+  },
   methods: {
-      onSelected(data) {
-    //   this.form.addressprovince = data.province.value
-    //   this.form.addresscity = data.city.value
-    //   this.form.addressdist = data.area.value
+    onSelected(data) {
+      this.addressprovince = data.province.value;
+      this.addresscity = data.city.value;
+      this.addressdist = data.area.value;
+      this.form.currentLocation =
+        this.addressprovince + "-" + this.addresscity + "-" + this.addressdist;
     },
     open(item) {
-      this.id = item.id;
-      this.form.a = item.shBranch;
-      this.form.b = item.shBranch;
-      this.form.c = item.shBranch;
-      this.form.d = item.shBranch;
-      this.form.e = item.shBranch;
-      this.form.f = item.shBranch;
-      this.form.g = item.shBranch;
-      this.form.h = item.shBranch;
+      this.currentLocation = item.currentLocation;
+      this.form.isHealthy = item.isHealthy;
+      this.form.hasTravelMediumHighRiskAreas =
+        item.hasTravelMediumHighRiskAreas;
+      this.form.hasTravelAbroad = item.hasTravelAbroad;
+      this.form.contact = item.contact;
+      this.form.isolation = item.isolation;
+      this.form.infection = item.infection;
+      this.form.hasTested = item.hasTested;
+      this.form.isVaccination = item.isVaccination;
       this.dialogFormVisible = true;
     },
     handleAdd() {
-        this.handleClose();
-    //   this.$refs["form"].validate((valid) => {
-    //     if (valid) {
-    //       let data = this.form
-    //       modShStatus(data).then((res) => {
-    //         if (res.code == 0) {
-    //           this.$message.success("审核完成");
-    //           this.$emit("refresh");
-    //           this.handleClose();
-    //         }
-    //       });
-    //     }
-    //   });
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          this.addHealthyRecord();
+          this.$emit("refresh");
+          this.handleClose();
+        }
+      });
+      //   this.$refs["form"].validate((valid) => {
+      //     if (valid) {
+      //       let data = this.form
+      //       modShStatus(data).then((res) => {
+      //         if (res.code == 0) {
+      //           this.$message.success("审核完成");
+      //           this.$emit("refresh");
+      //           this.handleClose();
+      //         }
+      //       });
+      //     }
+      //   });
+    },
+    addHealthyRecord() {
+      if (this.form.currentLocation === null) {
+        this.$message.warning("目前所在地不能为空");
+      } else {
+        userDailyApi.addHealthyRecord(this.form).then((response) => {
+          if (response.code == 20000) {
+            this.$message.success("添加成功");
+            setTimeout(() => {
+              this.$router.push({
+                path: "userDailyList",
+                query: { userType: this.userType },
+              });
+            }, 3000);
+          }
+        });
+      }
+    },
+    getHealthyRecordInfo() {
+      userDailyApi.getHealthyRecordInfo(this.recordId).then((response) => {
+        if (response.code == 20000) {
+          this.form = response.data.healthyRecord;
+          this.addressprovince =
+            response.data.healthyRecord.currentLocation.split("-")[0];
+          this.addresscity =
+            response.data.healthyRecord.currentLocation.split("-")[1];
+          this.addressdist =
+            response.data.healthyRecord.currentLocation.split("-")[2];
+        }
+      });
+    },
+    updateHealthyRecord() {
+      console.log(this.form);
+      userDailyApi.updateHealthyRecord(this.form).then((response) => {
+        if (response.code == 20000) {
+          this.$message.success("修改成功");
+          setTimeout(() => {
+            this.$router.push({
+              path: "userDailyList",
+              query: { userType: this.userType },
+            });
+          }, 3000);
+        }
+      });
     },
     handleClose() {
-      // if (this.$refs["form"]) {
-      //   this.$refs["form"].resetFields();
-      // }
+      if (this.$refs["form"]) {
+        this.$refs["form"].resetFields();
+      }
       this.dialogFormVisible = false;
-    //   this.form = [];
-    //   this.id = "";
+      this.form = [];
+      this.id = "";
     },
   },
 };
@@ -222,7 +317,7 @@ export default {
   background-color: #e2a0c9;
   border-style: none;
 }
-.form{
+.form {
   margin-top: -15px;
 }
 </style>
