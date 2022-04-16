@@ -6,7 +6,7 @@
           <div class="search-item">
              <span style="width: 100px">用户名</span>
             <el-input
-              v-model="searchQuery.patName"
+              v-model="userName"
               size="small"
               placeholder="请输入"
             ></el-input>
@@ -26,7 +26,7 @@
               "
               size="small"
               class="btnh"
-              @click="search(1)"
+              @click="search()"
             >
               <i class="el-icon-search"></i>
               查询</el-button
@@ -152,7 +152,7 @@
           </template>
         </el-table-column>
       </el-table>
-    <modify-dialog ref="modifyDialog" @refresh="search(1)"></modify-dialog>
+    <modify-dialog ref="modifyDialog" @refresh="search()"></modify-dialog>
     </div>
     <div class="block">
       <el-pagination layout="prev, pager, next" :total="50"> </el-pagination>
@@ -161,98 +161,21 @@
 </template>
 <script>
 import ModifyDialog from './ModifyDialog.vue';
+import adApi from '../../../api/ad';
 export default {
     components:{
       ModifyDialog,
     },
   data() {
     return {
+      userName:"",
       tableData: [
-        {
-          clockTime: "2021-09-27 11:13:33",
-          patTemperature: "36.5",
-          patName: "王小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:15:15",
-          patTemperature: "35.9",
-          patName: "赵小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:11:28",
-          patName: "钱小虎",
-          patTemperature: "36.1",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:16:26",
-          patName: "孙小虎",
-          patTemperature: "36",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "未打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:11:25",
-          patName: "李小虎",
-          patTemperature: "36.8",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "已感染",
-          tag: "未打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:14:32",
-          patName: "周小虎",
-          patTemperature: "37",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "已打卡",
-        },
-        {
-          clockTime: "2021-09-27 11:15:23",
-          patName: "吴小虎",
-          patTemperature: "36",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          condition: "健康",
-          tag: "未打卡",
-        },
       ],
       currentRow: null,
-      bodyList: [
-        {
-          value: 1,
-          name: "健康",
-        },
-        {
-          value: 0,
-          name: "已感染",
-        },
-      ],
-      searchQuery: {
-        idCard: "",
-        patName: "",
-        clockCon: [],
-        bodyCon: [],
-      },
-      clockList: [
-        {
-          value: 1,
-          name: "已打卡",
-        },
-        {
-          value: 0,
-          name: "未打卡",
-        },
-      ],
     };
+  },
+  created(){
+    this.getManagerList()
   },
   methods: {
     handleModify(item,type) {
@@ -267,14 +190,7 @@ export default {
     auditEmpType() {
     },
     reset() {
-      (this.searchQuery = {
-        idCard: "",
-        patName: "",
-        clockCon: [],
-        bodyCon: [],
-      }),
-        (this.createDataRange = []);
-      this.modifyDataRange = [];
+      this.userName=""
       this.search();
     },
     addEmpType() {
@@ -283,6 +199,18 @@ export default {
     deleteEmpType() {
       console.log(2);
     },
+    getManagerList(){
+      adApi.getManagerList(this.userName).then(response =>{
+        if(response.code===20000){
+          this.tableData = response.data.manager
+        }else{
+          this.$message.warning(response.message)
+        }
+      })
+    },
+    search(){
+      this.getManagerList();
+    }
   },
 };
 </script>

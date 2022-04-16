@@ -66,10 +66,10 @@
             <li class="dx">
               <img src="../../assets/public_images/manager.jpg" alt="" />
               <el-radio-group v-model="form.roleType" prop="roleType">
-              <el-radio class="radio" label="1"
+              <el-radio class="radio" label=1
                 >用户 </el-radio
               >
-              <el-radio label="2"
+              <el-radio label=2
                 >管理员</el-radio
               ></el-radio-group>
             </li>

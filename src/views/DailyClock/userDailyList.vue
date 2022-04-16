@@ -194,6 +194,9 @@ export default {
   created() {
     this.getHealthyRecordList();
   },
+  activated(){
+    this.getHealthyRecordList();
+  },
   methods: {
     addEmpType() {
       //需要判断当天是否已经打卡
@@ -270,7 +273,8 @@ export default {
             this.pageSize = response.data.size;
           } else {
             this.tableData=[]
-            this.$message.warning("暂无打卡记录");
+            this.$message.warning(response.message);
+            this.$router.push({path:"login"})
           }
         });
     },

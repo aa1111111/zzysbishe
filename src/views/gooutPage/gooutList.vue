@@ -6,9 +6,11 @@
           <div class="search-item">
             <span style="width: 100px">日期</span>
             <el-date-picker
-              type="date"
+              type="datetime"
               placeholder="选择日期"
-              v-model="recordDate"
+              v-model="applyDate"
+              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
               style="width: 100%"
             ></el-date-picker>
           </div>
@@ -52,7 +54,11 @@
           新增
         </el-button>
 
-        <el-button @click="deleteEmpType" size="small">
+        <el-button
+          @click="deleteEmpType"
+          size="small"
+          :disabled="this.multipleSelection.length === 0"
+        >
           <i class="el-icon-delete"></i>
           删除
         </el-button>
@@ -65,6 +71,8 @@
         highlight-current-row
         height="300"
         ref="table"
+         :row-key="getRowKey"
+        @selection-change="handleSelectionChange"
         :header-cell-style="{ background: '#659798', color: 'white' }"
         style="width: 100%"
       >
@@ -85,7 +93,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="patName"
+          prop="userName"
           label="姓名"
           width="100"
           fixed
@@ -93,7 +101,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="tel"
+          prop="phone"
           label="联系方式"
           width="100"
           fixed
@@ -101,7 +109,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="patAddress"
+          prop="realDestination"
           label="外出地点"
           fixed
           align="center"
@@ -109,19 +117,19 @@
         </el-table-column>
         <el-table-column prop="reason" label="外出原因" fixed align="center">
         </el-table-column>
-        <el-table-column prop="time" label="外出时间" fixed align="center">
+        <el-table-column prop="leaveStartTime" label="外出时间" fixed align="center">
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
         </el-table-column>
         <el-table-column
-          prop="statusly"
+          prop="msgBack"
           label="审核不通过理由"
           fixed
           align="center"
         >
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
-          <template>
+          <template slot-scope="scope">
             <el-button type="text" size="small" @click="modify(scope.row.uuid)"
               >修改</el-button
             >
@@ -141,39 +149,43 @@
   </div>
 </template>
 <script>
-import userDailyApi from "../../api/userDaily";
+import goOutApi from "../../api/goOut";
 export default {
   data() {
     return {
-      pageSize: 1,
-      currentPage: 10,
+      pageSize: 10,
+      currentPage: 1,
       total: 0,
-      recordDate: "",
+      applyDate: "",
       multipleSelection: [],
       tableData: [],
     };
   },
   created() {
-    this.getHealthyRecordList();
+    this.getOutApplicationList();
   },
-  mounted() {},
+  activated(){
+    this.getOutApplicationList();
+  },
   methods: {
     addEmpType() {
       this.$router.push({
         path: "gooutIndex",
-        query: { userType: this.userType },
       });
     },
     getRowKey(row) {
       return row.id;
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.multipleSelection = val;
+      this.ids = this.multipleSelection .map((item) => {
+        return item.uuid
+      })
     },
     modify(uuid) {
       this.$router.push({
-        path: "userDailyIndex",
-        query: { recordId: uuid, gai: 1 },
+        path: "gooutIndex",
+        query: { id: uuid, gai: 1 },
       });
     },
     filterTag(value, row) {
@@ -183,16 +195,14 @@ export default {
       return row.condition === value;
     },
     reset() {
-      (this.recordDate = ""), this.getHealthyRecordList();
+      this.applyDate = ""
+      this.getOutApplicationList();
     },
     deleteEmpType() {
       //批量删除的方法
-      if (this.multipleSelection.length <= 0) {
+      if (this.multipleSelection == [] ||
+        this.multipleSelection.length == 0) {
         this.$message.info("请选择要删除的数据");
-        return;
-      }
-      if (!enable) {
-        this.$message.warning("所选数据中存在不能被删除数据，不能进行删除！");
         return;
       }
       this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
@@ -202,12 +212,10 @@ export default {
       })
         .then(() => {
           //参数
-          const params = this.multipleSelection.map((i) => {
-            return i.id;
-          });
-          deleteLyzRoom(params).then((response) => {
+          goOutApi.deleteOutApplication(this.ids).then((response) => {
             this.$message.success("删除成功");
-            this.getHealthyRecordList();
+            this.getOutApplicationList();
+            this.isSelected=false
           });
         })
         .catch(() => {
@@ -217,10 +225,12 @@ export default {
           });
         });
     },
-
-    getHealthyRecordList() {
-      userDailyApi
-        .getHealthyRecordList(this.pageSize, this.currentPage, this.recordDate)
+    search(){
+      this.getOutApplicationList()
+    },
+    getOutApplicationList() {
+      goOutApi
+        .getOutApplicationList(this.currentPage, this.pageSize, this.applyDate)
         .then((response) => {
           console.log(response.data);
           if (response.data.items.length > 0) {
@@ -229,7 +239,9 @@ export default {
             this.total = response.data.total;
             this.pageSize = response.data.size;
           } else {
-            this.$message.warning("暂无打卡记录");
+            this.tableData=[]
+            this.$message.warning(response.message);
+            this.$router.push({path:"login"})
           }
         });
     },

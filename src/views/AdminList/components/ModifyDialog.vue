@@ -14,16 +14,14 @@
         label-width="120px"
         :rules="rules"
       >
-        <el-form-item label="用户名" prop="name">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="form.userName"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="a">
-          <el-input type="password" v-model="form.a"></el-input>
+        <el-form-item label="用户名" prop="realName">
+          <el-input v-model="form.realName"></el-input>
         </el-form-item>
-        <el-form-item label="用户角色" prop="c" class="nr">
-          <el-select v-model="form.c" placeholder="请选择用户角色">
-            <el-option label="超级管理员" value="gly"></el-option>
-          </el-select>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="form.phone"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer" style="text-align: center">
@@ -43,13 +41,14 @@
   </div>
 </template>
 <script>
+import loginApi from '../../../api/login';
 export default {
   data() {
     return {
       form: {
-        name: "王小虎",
-        a: "111",
-        c: "管理员",
+        userName: "",
+        realName: "",
+        phone: "",
       },
       rules: {
         name: [{ required: true, message: "请输入", trigger: "blur" }],
@@ -73,7 +72,13 @@ export default {
       this.dialogFormVisible = true;
     },
     handleAdd() {
-      this.handleClose();
+      loginApi.modifyUserInfo(this.form).then(response =>{
+        if(response.code===2){
+          this.$message.success(response.message)
+          this.handleClose();
+        }
+      })
+      
       //   this.$refs["form"].validate((valid) => {
       //     if (valid) {
       //       let data = this.form

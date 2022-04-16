@@ -30,8 +30,8 @@
         label-width="80px"
         :rules="rules"
       >
-        <el-form-item label="申请人" prop="name">
-          <el-input v-model="form.name" :disabled="true"></el-input>
+        <el-form-item label="申请人" prop="userName">
+          <el-input v-model="form.userName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="联系电话" prop="phone">
           <el-input v-model="form.phone" :disabled="true"></el-input>
@@ -39,78 +39,65 @@
 
         <p class="zs">部门信息</p>
         <el-form-item label="公司/学校" prop="region">
-          <el-select v-model="form.region" placeholder="请选择公司/学校">
-            <el-option
-              v-for="(item, index) in regionList"
-              :key="index"
-              :label="item.name"
-              :value="item.value"
-            >
-            </el-option>
+          <el-select v-model="form.unitName" placeholder="请选择公司/学校" :disabled="true">
+            <!-- <el-option 
+            v-for="item in options"
+            :key="item.uuid"
+            :label="item.unitName"
+            :value="item.uuid">
+            </el-option> -->
             <!-- <el-option label="宁波财经学院" value="shanghai"></el-option>
             <el-option label="浙江万里学院" value="beijing"></el-option>
             <el-option label="宁波大学" value="qq"></el-option> -->
           </el-select>
         </el-form-item>
-        <el-form-item label="工号/学号" prop="idcard">
-          <el-input v-model="form.idcard"></el-input>
+        <el-form-item label="工号/学号" prop="number">
+          <el-input v-model="form.number" :disabled="true"></el-input>
         </el-form-item>
 
         <p class="zs">外出信息</p>
-        <el-form-item label="请假类别" prop="lb">
-          <el-select v-model="form.lb" placeholder="请选择">
-            <el-option
-              v-for="(item, index) in lbList"
-              :key="index"
-              :label="item.name"
-              :value="item.value"
-            >
-            </el-option>
-            <!-- <el-option label="事假" value="shanghai"></el-option>
-            <el-option label="病假" value="beijing"></el-option>
-            <el-option label="公假" value="qq"></el-option> -->
+        <el-form-item label="请假类别" prop="leaveCategory">
+          <el-select v-model="form.leaveCategory" placeholder="请选择">
+            <el-option label="事假" value="0"></el-option>
+            <el-option label="病假" value="1"></el-option>
+            <el-option label="公假" value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="目的地范围" prop="mdd">
-          <el-select v-model="form.mdd" placeholder="请选择">
-            <el-option
-              v-for="(item, index) in mddList"
-              :key="index"
-              :label="item.name"
-              :value="item.value"
-            >
-            </el-option>
-            <!-- <el-option label="宁波市内" value="shanghai"></el-option>
-            <el-option label="浙江省内宁波市外" value="beijing"></el-option>
-            <el-option label="浙江省外" value="qq"></el-option> -->
+        <el-form-item label="目的地范围" prop="destinationArea">
+          <el-select v-model="form.destinationArea" placeholder="请选择">
+            <el-option label="宁波市内" value="0"></el-option>
+            <el-option label="浙江省内宁波市外" value="1"></el-option>
+            <el-option label="浙江省外" value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="前往目的地" prop="goout">
-          <el-input v-model="form.goout"></el-input>
+        <el-form-item label="前往目的地" prop="destination">
+          <el-input v-model="form.destination"></el-input>
         </el-form-item>
         <el-form-item label="请假时间">
           <el-col :span="11">
             <el-date-picker
               type="date"
               placeholder="选择日期"
-              v-model="form.date1"
+              v-model="form.leaveStartTime"
               style="width: 100%"
             ></el-date-picker>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
           <el-col :span="11">
-            <el-time-picker
+            <el-date-picker
+              type="date"
               placeholder="选择时间"
-              v-model="form.date2"
+              v-model="form.leaveEndTime"
               style="width: 100%"
-            ></el-time-picker> </el-col
+              @change="selectTime"
+            ></el-date-picker> </el-col
         ></el-form-item>
-        <el-form-item label="天数" prop="day">
-          <el-input v-model="form.day"></el-input>
+        <el-form-item label="天数" prop="leaveDays">
+          <el-input v-model="form.leaveDays" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="外出事由" prop="desc">
-          <el-input type="textarea" v-model="form.desc"></el-input>
+        <el-form-item label="外出事由" prop="reason">
+          <el-input type="textarea" v-model="form.reason"></el-input>
         </el-form-item>
 
         <el-form-item class="btn">
@@ -127,113 +114,118 @@
   </div>
 </template>
 <script>
-import userDailyApi from "../../api/userDaily";
+import goOutApi from "../../api/goOut";
+import returnWorkApi from "../../api/returnWork";
 export default {
   data() {
     return {
       form: {
-        name: "王小虎",
-        phone: "1321245852",
-        region: "宁波财经学院",
-        idcard: "1822110044",
+        userId:"",
+        userName: "",
+        phone: "",
+        unitId: "",
+        unitName:"",
+        number: "",
+        leaveCategory:"",
+        destinationArea:"",
+        destination:"",
+        leaveStartTime:"",
+        leaveEndTime:"",
+        leaveDays:"",
+        reason:""
       },
-      regionList: [
-        {
-          value: "1",
-          name: "宁波大学",
-        },
-        {
-          value: "2",
-          name: "浙江万里学院",
-        },
-        {
-          value: "3",
-          name: "宁波财经学院",
-        },
-      ],
-      mddList: [
-        {
-          value: "1",
-          name: "浙江省外",
-        },
-        {
-          value: "2",
-          name: "浙江省内宁波市外",
-        },
-        {
-          value: "3",
-          name: "宁波市内",
-        },
-      ],
-      lbList: [
-        {
-          value: "1",
-          name: "事假",
-        },
-        {
-          value: "2",
-          name: "病假",
-        },
-        {
-          value: "3",
-          name: "公假",
-        },
-      ],
+
       gai: null,
       rules: {
         // name: [{ required: true, message: "请输入", trigger: "blur" }],
         // phone: [{ required: true, message: "请输入", trigger: "blur" }],
-        region: [{ required: true, message: "请选择", trigger: "change" }],
-        idcard: [{ required: true, message: "请输入", trigger: "blur" }],
-        lb: [{ required: true, message: "请选择", trigger: "change" }],
-        mdd: [{ required: true, message: "请选择", trigger: "change" }],
-        goout: [{ required: true, message: "请输入", trigger: "blur" }],
-        day: [{ required: true, message: "请输入", trigger: "blur" }],
-        desc: [{ required: true, message: "请输入", trigger: "blur" }],
+        leaveCategory: [{ required: true, message: "请选择", trigger: "change" }],
+        destinationArea: [{ required: true, message: "请选择", trigger: "change" }],
+        destination: [{ required: true, message: "请输入", trigger: "blur" }],
+        leaveStartTime: [{ required: true, message: "请选择", trigger: "change" }],
+        leaveEndTime: [{ required: true, message: "请选择", trigger: "change" }],
+        // leaveDays: [{ required: true, message: "请输入", trigger: "blur" }],
+        reason: [{ required: true, message: "请输入", trigger: "blur" }],
       },
     };
   },
+  created() {
+    this.getUserInfo();
+  },
   mounted() {
     this.gai = this.$route.query.gai;
-    console.log(this.gai);
+    if(this.gai==1){
+      this.id=this.$route.query.id
+      this.getOutApplication()
+      console.log("gai"+this.gai);
+    }
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
+     getUserInfo(){
+      returnWorkApi.getUserInfo().then(response=>{
+        this.form.userName = response.data.userInfo.userName
+        this.form.userId = response.data.userInfo.uuid
+        this.form.unitName = response.data.userInfo.unitName
+        this.form.unitId = response.data.userInfo.unitId
+        this.form.number = response.data.userInfo.number
+        this.form.phone = response.data.userInfo.phone
+        console.log(this.form)
+      })
+    },
     save() {
       this.$refs["form"].validate((valid) => {
-        this.addHealthyRecord();
+        this.addOutApplication();
       });
     },
     modify() {
       this.$refs["form"].validate((valid) => {
-        this.updateHealthyRecord();
+        this.updateOutApplication();
       });
     },
-    addHealthyRecord() {
-      userDailyApi.addHealthyRecord(this.form).then((response) => {
+    compareDate(dateTime1,dateTime2){
+       var formatDate1 = new Date(dateTime1)
+      var formatDate2 = new Date(dateTime2)
+      if(formatDate1>=formatDate2){
+         this.$message.warning("结束日期不能早于开始日期"); 
+      }else{
+        var day = (formatDate2-formatDate1)/1000/60/60/24
+        this.form.leaveDays=day;
+        console.log(this.form.leaveDays)
+      }
+    },
+    selectTime(){
+      this.compareDate(this.form.leaveStartTime,this.form.leaveEndTime)
+    },
+    addOutApplication() {
+      this.compareDate(this.form.leaveStartTime,this.form.leaveEndTime);
+      goOutApi.addOutApplication(this.form).then((response) => {
         if (response.code == 20000) {
-          setTimeout(() => {
-            this.$message.success("添加成功");
-          }, 3000);
+          this.$message.success("添加成功");
+            this.$router.push({
+              path: "gooutList",
+            });
+        }
+      });
+    },
+    getOutApplication() {
+      goOutApi.getOutApplication(this.id).then((response) => {
+        if (response.code == 20000) {
+          this.form = response.data.application;
+        }else{
+          this.$message.warning(response.message)
           this.$router.push({
-            path: "gooutList",
-            query: { userType: this.userType },
-          });
+              path: "returnList"
+            })
         }
       });
     },
-    getHealthyRecordInfo() {
-      userDailyApi.getHealthyRecordInfo(this.recordId).then((response) => {
-        if (response.code == 20000) {
-          this.form = response.data.healthyRecord;
-        }
-      });
-    },
-    updateHealthyRecord() {
+    updateOutApplication() {
+      
       console.log(this.form);
-      userDailyApi.updateHealthyRecord(this.form).then((response) => {
+      goOutApi.updateOutApplication(this.form).then((response) => {
         if (response.code == 20000) {
           setTimeout(() => {
             this.$message.success("修改成功");

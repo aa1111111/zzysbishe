@@ -15,5 +15,17 @@ export default {
   identify(identifyVo){
     let url = `/zzysbishe/user/identify`
     return request.put(url,identifyVo)
+  },
+  getUserInfo(){
+    let url = `/zzysbishe/user/getUserInfo`
+    return request.get(url)
+  },
+  modifyUserInfo(userBaseInfo){
+    let url = `/zzysbishe/user/updateUserBaseInfo`
+    return request.put(url,userBaseInfo)
+  },
+  userLoginOut(){
+    let url = `/zzysbishe/user/loginOut`
+    return request.get(url)
   }
 }

@@ -156,7 +156,7 @@ export default {
   created() {
     this.getWorkApplicationList();
   },
-  mounted() {
+  activated(){
    this.getWorkApplicationList();
   },
   methods: {
@@ -205,9 +205,14 @@ export default {
         .then(() => {
           //参数
           returnWorkApi.deleteReturnApplication(this.ids).then((response) => {
-            this.$message.success("删除成功");
-            this.getWorkApplicationList();
-            this.isSelected=false
+            if(response.code ==20000){
+              this.$message.success("删除成功");
+              this.getWorkApplicationList();
+              this.isSelected=false
+            }else{
+              this.$message.warning(response.message)
+              this.$router.push({ name: "login" });
+            }
           });
         })
         .catch(() => {
@@ -232,7 +237,7 @@ export default {
             this.pageSize = response.data.size;
           } else {
             this.tableData=[]
-            this.$message.warning("暂无申请记录");
+            this.$message.warning(response.message);
           }
         });
     },

@@ -174,6 +174,11 @@ export default {
       returnWorkApi.getReturnApplication(this.id).then((response) => {
         if (response.code == 20000) {
           this.form = response.data.application;
+        }else{
+          this.$message.warning(response.message)
+          this.$router.push({
+              path: "returnList"
+            })
         }
       });
     },
