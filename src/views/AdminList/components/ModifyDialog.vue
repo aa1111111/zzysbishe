@@ -78,19 +78,16 @@ export default {
           this.handleClose();
         }
       })
-      
-      //   this.$refs["form"].validate((valid) => {
-      //     if (valid) {
-      //       let data = this.form
-      //       modShStatus(data).then((res) => {
-      //         if (res.code == 0) {
-      //           this.$message.success("审核完成");
-      //           this.$emit("refresh");
-      //           this.handleClose();
-      //         }
-      //       });
-      //     }
-      //   });
+    },
+    getUserInfo(){
+      loginApi.getUserInfoById(this.id).then(response =>{
+        if(response.code===20000){
+          this.form = response.data.userInfo;
+          console.log(this.form)
+        }else{
+          this.$message.warning(response.message)
+        }
+      })
     },
     handleClose() {
       // if (this.$refs["form"]) {

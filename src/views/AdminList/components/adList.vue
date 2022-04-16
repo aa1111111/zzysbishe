@@ -63,10 +63,14 @@
             <i class="el-icon-delete"></i>
             批量审核
           </el-button>
-          <el-button @click="deleteEmpType" size="small">
-            <i class="el-icon-delete"></i>
-            删除
-          </el-button>
+          <el-button
+          @click="deleteEmpType"
+          size="small"
+          :disabled="this.multipleSelection.length === 0"
+        >
+          <i class="el-icon-delete"></i>
+          删除
+        </el-button>
         </el-col>
         
       </el-row>
@@ -78,6 +82,8 @@
         highlight-current-row
         height="300"
         ref="table"
+        :row-key="getRowKey"
+        @selection-change="handleSelectionChange"
         :header-cell-style="{ background: '#994a8e', color: 'white' }"
         style="width: 100%"
       >
@@ -146,7 +152,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleModify(scope.row,1)"
+            <el-button type="text" size="small" @click="handleModify(scope.row,uuid)"
               >修改</el-button
             >
           </template>
@@ -171,6 +177,8 @@ export default {
       userName:"",
       tableData: [
       ],
+      multipleSelection: [],
+      ids: [],
       currentRow: null,
     };
   },
@@ -193,6 +201,15 @@ export default {
       this.userName=""
       this.search();
     },
+    getRowKey(row) {
+      return row.id;
+    },
+    handleSelectionChange (val) {
+      this.multipleSelection = val;
+      this.ids = this.multipleSelection .map((item) => {
+        return item.uuid
+      })
+    },
     addEmpType() {
       this.$refs.modifyDialog.open(1);
     },
@@ -210,7 +227,34 @@ export default {
     },
     search(){
       this.getManagerList();
-    }
+    },
+    deleteEmpType() {
+      //批量删除的方法
+      if (this.multipleSelection == [] ||
+        this.multipleSelection.length == 0) {
+        this.$message.info("请选择要删除的数据");
+        return;
+      }
+      this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //参数
+          adApi.deleteManager(this.ids).then((response) => {
+            this.$message.success("删除成功");
+            this.getManagerList();
+            this.isSelected=false
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
   },
 };
 </script>
