@@ -8,7 +8,8 @@
       class="minDialog"
     >
     <!-- :style="{'background-image':'url('+require('@/assets/public_images/bizhi.jpg')+')', backgroundSize:'600px 350px',backgroundPosition:'340px 90px', backgroundRepeat: 'no-repeat'}" -->
-      <div v-show="this.manage==1">
+     <!-- 复工 -->
+      <div v-if="this.manage == 1">
       <el-form
         
         ref="form"
@@ -48,7 +49,8 @@
         </div>
       </div>
     </div>
-      <div v-show="this.manage==2">
+    <!-- 外出 -->
+      <div v-else>
       <el-form
         
         ref="form2"
@@ -119,6 +121,11 @@ export default {
     };
   },
   methods: {
+    openR(item,type) {
+      this.id = item.id;
+      this.manage = type
+      this.dialogFormVisible = true;
+    },
     open(item) {
       this.id = item.id;
       
@@ -154,7 +161,6 @@ export default {
     },
   },
   mounted() {
-    this.manage = this.$route.query.manage;
   },
 };
 </script>

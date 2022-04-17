@@ -14,7 +14,7 @@
             <el-date-picker
               type="datetime"
               placeholder="选择日期"
-              v-model="recordDate"
+              v-model="applyDate"
               value-format="yyyy-MM-dd"
               format="yyyy-MM-dd"
               style="width: 100%"
@@ -69,7 +69,7 @@
           size="small"
         >
           <i class="el-icon-delete"></i>
-          批量审核
+          批量通过
         </el-button>
         <el-button
           @click="deleteEmpType"
@@ -97,15 +97,14 @@
           type="selection"
           width="50"
           fixed
-          :reserve-selection="true"
           align="center"
         >
         </el-table-column>
         <el-table-column type="index" label="序号" fixed align="center">
         </el-table-column>
-        <el-table-column prop="patName" label="姓名" fixed align="center">
+        <el-table-column prop="userName" label="姓名" fixed align="center">
         </el-table-column>
-        <el-table-column prop="tel" label="联系方式" fixed align="center">
+        <el-table-column prop="phone" label="联系方式" fixed align="center">
         </el-table-column>
         <el-table-column
           prop="patAddress"
@@ -156,6 +155,7 @@
         :current-page="currentPage"
         :page-size="pageSize"
         :total="total"
+        @current-change="handleCurrrentChange" 
       >
       </el-pagination>
     </div>
@@ -166,6 +166,7 @@ import AddDialog from "./addDialog.vue";
 import CheckDialog from "./checkDialog.vue";
 import ModifyDialog from "./ModifyDialog.vue";
 import reviewDialog from "./reviewDialog.vue";
+import returnWorkApi from "../../../api/returnWork";
 export default {
   components: {
     reviewDialog,
@@ -178,21 +179,24 @@ export default {
       pageSize: 10,
       currentPage: 1,
       total: 0,
-      recordDate: "",
+      applyDate: "",
       name: "",
+      // isSelected:true,
       tableData: [],
       multipleSelection: [],
-      tableData: [],
       ids: [],
     };
   },
-  mounted() {
-    this.getHealthyRecordList();
+  created(){
+    this.getWorkApplicationList();
   },
   methods: {
     // handleCheck(item) {
     //   this.$refs.checkDialog.open(1, item);
     // },
+    handleCurrrentChange(val) {
+      console.log(`当前页${val}`)
+    },
     handleReview(item) {
       this.$refs.reviewDialog.open(1, item);
     },
@@ -209,9 +213,9 @@ export default {
       });
     },
     reset() {
-      this.recordDate = "";
+      this.applyDate = "";
       this.name = "";
-      this.getHealthyRecordList();
+      this.getWorkApplicationList();
     },
     // addEmpType() {
     //   this.$refs.addDialog.open(1);
@@ -229,10 +233,10 @@ export default {
       })
         .then(() => {
           //参数
-          userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
+          returnWorkApi.deleteReturnApplication(this.ids).then((response) => {
             this.$message.success("删除成功");
-            this.getHealthyRecordList();
-            this.isSelected = false;
+            this.getWorkApplicationList();
+            // this.isSelected = false;
           });
         })
         .catch(() => {
@@ -242,12 +246,37 @@ export default {
           });
         });
     },
-    search() {
-      this.getHealthyRecordList();
+    auditEmpType(){
+            if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
+        this.$message.info("请选择要审核的数据");
+        return;
+      }
+      this.$confirm("批量审核操作不可逆，是否继续 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //参数
+           returnWorkApi.checkApplication(this.ids).then((response) => {
+             debugger
+            this.$message.success("成功");
+            this.getWorkApplicationList();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消审核",
+          });
+        });
     },
-    getHealthyRecordList() {
-      userDailyApi
-        .getHealthyRecordList(this.currentPage, this.pageSize, this.recordDate)
+    search() {
+      this.getWorkApplicationList();
+    },
+    getWorkApplicationList() {
+      returnWorkApi
+        .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate)
         .then((response) => {
           console.log(response.data);
           if (response.data.items.length > 0) {
@@ -258,7 +287,7 @@ export default {
           } else {
             this.tableData = [];
             this.$message.warning(response.message);
-            this.$router.push({ path: "login" });
+            // this.$router.push({ path: "login" });
           }
         });
     },

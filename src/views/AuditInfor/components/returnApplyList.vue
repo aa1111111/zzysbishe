@@ -143,7 +143,7 @@
             <el-button type="text" size="small" @click="handleModify(scope.row)"
               >修改</el-button
             >
-            <el-button type="text" size="small" @click="handleReview(scope.row)"
+            <el-button type="text" size="small" @click="handleReview(scope.row,1)"
               >审核</el-button
             >
           </template>
@@ -204,8 +204,8 @@ export default {
     handleCurrrentChange(val) {
       console.log(`当前页${val}`)
     },
-    handleReview(item) {
-      this.$refs.reviewDialog.open(1,item);
+    handleReview(item,type) {
+      this.$refs.reviewDialog.openR(item,type);
     },
     handleModify(item) {
       this.$refs.modifyDialog.openF(item);
