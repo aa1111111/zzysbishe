@@ -102,6 +102,7 @@ export default {
         number: "",
         applyTime: "",
         remark: "",
+        status:0
       },
       gai: null,
       rules: {
@@ -114,11 +115,10 @@ export default {
     };
   },
   created() {
-    this.getUserInfo();
+    // this.getUserInfo();
     this.getUnitList();
   },
   mounted() {
-    debugger
     this.gai = this.$route.query.gai;
     if (this.gai == 1) {
       this.form.uuid = this.$route.query.id;
@@ -165,7 +165,6 @@ export default {
       }
     },
     save() {
-      debugger;
       console.log(this.form);
       this.$refs["form"].validate((valid) => {
         this.addReturnApplication();

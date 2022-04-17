@@ -368,7 +368,7 @@ export default {
       //   this.form.addressdist = data.area.value
     },
     openF(item) {
-      debugger
+      // debugger
       this.Fform.uuid = item.uuid;
       this.Fform.userName = item.userName;
       this.Fform.applyTime = item.applyTime;

@@ -143,7 +143,7 @@
             <el-button type="text" size="small" @click="handleModify(scope.row)"
               >修改</el-button
             >
-            <el-button type="text" size="small" @click="handleReview(scope.row,1)"
+            <el-button type="text" size="small" v-if="scope.row.status == 0" @click="handleReview(scope.row,1)"
               >审核</el-button
             >
           </template>

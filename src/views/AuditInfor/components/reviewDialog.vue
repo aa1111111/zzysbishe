@@ -42,7 +42,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer" style="text-align: center">
         <div>
-          <el-button class="btn1" type="primary" size="small" @click="handleAdd">
+          <el-button class="btn1" type="primary" size="small" @click="handleAddR">
             保存</el-button
           >
           <el-button size="small" @click="handleClose"> 取消</el-button>
@@ -87,7 +87,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer" style="text-align: center">
         <div>
-          <el-button class="btn1" type="primary" size="small" @click="handleAdd">
+          <el-button class="btn1" type="primary" size="small" @click="handleAddG">
             保存</el-button
           >
           <el-button size="small" @click="handleClose"> 取消</el-button>
@@ -98,13 +98,15 @@
   </div>
 </template>
 <script>
+import returnWorkApi from "../../../api/returnWork";
 export default {
   data() {
     return {
       manage:null,
       form: {
-        reason: "",
-        branchCode: "",
+        uuid:"",
+        status: "",
+        msgBack: "",
       },
       rules: {
         branchCode: [
@@ -122,7 +124,7 @@ export default {
   },
   methods: {
     openR(item,type) {
-      this.id = item.id;
+      this.form.uuid = item.uuid;
       this.manage = type
       this.dialogFormVisible = true;
     },
@@ -131,33 +133,29 @@ export default {
       
       this.dialogFormVisible = true;
     },
-    handleAdd() {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          let data = {
-            branchId: this.form.branchCode,
-            reason: this.form.reason,
-            id: this.id,
-            type: 1,
-          };
-
-          modShStatus(data).then((res) => {
-            if (res.code == 0) {
-              this.$message.success("审核完成");
-              this.$emit("refresh");
-              this.handleClose();
-            }
-          });
-        }
-      });
+    handleAddR() {
+      this.updateReturnApplication()
+    },
+    handleAddG() {
+      
     },
     handleClose() {
-      if (this.$refs["form"]) {
-        this.$refs["form"].resetFields();
-      }
+      // if (this.$refs["form"]) {
+      //   this.$refs["form"].resetFields();
+      // }
       this.dialogFormVisible = false;
-      this.form = { reason: "", branchCode: "" };
-      this.id = "";
+      // this.form = { reason: "", branchCode: "" };
+      // this.id = "";
+    },
+    updateReturnApplication() {
+      returnWorkApi
+        .updateReturnApplication(this.form)
+        .then((response) => {
+          if (response.code == 20000) {
+            this.$message.success("修改成功");
+            this.handleClose();
+          }
+        });
     },
   },
   mounted() {
