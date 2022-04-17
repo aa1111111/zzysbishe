@@ -10,7 +10,16 @@
       <el-step title="完善信息"></el-step>
       <el-step title="完成认证"></el-step>
     </el-steps>
-    <div v-if="authenticationStatus == 0">
+    <div class="jz" v-if="authenticationStatus == 1">
+      <el-result
+        icon="success"
+        title="完成认证"
+        subTitle="请根据提示进行操作"
+        :style="{ marginTop: '-30px' }"
+      >
+      </el-result>
+    </div>
+    <div v-else>
     <div class="jz" v-show="active == 0">
       <el-form
         ref="form"
@@ -92,15 +101,7 @@
       >
       </el-result>
     </div></div>
-    <div class="jz" v-else>
-      <el-result
-        icon="success"
-        title="完成认证"
-        subTitle="请根据提示进行操作"
-        :style="{ marginTop: '-30px' }"
-      >
-      </el-result>
-    </div>
+    
   </div>
 </template>
 <script>
@@ -150,7 +151,7 @@ export default {
   },
   mounted() {
     this.userType = this.$route.query.userType;
-    this.userInfo()
+    this.getUserInfo()
   },
   methods: {
     getUserInfo() {
