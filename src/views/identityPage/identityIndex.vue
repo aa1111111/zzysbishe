@@ -10,6 +10,7 @@
       <el-step title="完善信息"></el-step>
       <el-step title="完成认证"></el-step>
     </el-steps>
+    <div v-if="authenticationStatus == 0">
     <div class="jz" v-show="active == 0">
       <el-form
         ref="form"
@@ -51,7 +52,7 @@
             @selected="onSelected"
           ></v-distpicker>
         </el-form-item>
-        <el-form-item label="所在公司/学校" prop="unit">
+        <el-form-item label="所在公司/学校" prop="unitId">
           <el-select
             v-model="form.unitId"
             placeholder="请选择公司/学校"
@@ -90,6 +91,15 @@
         :style="{ marginTop: '-30px' }"
       >
       </el-result>
+    </div></div>
+    <div class="jz" v-else>
+      <el-result
+        icon="success"
+        title="完成认证"
+        subTitle="请根据提示进行操作"
+        :style="{ marginTop: '-30px' }"
+      >
+      </el-result>
     </div>
   </div>
 </template>
@@ -113,6 +123,7 @@ export default {
         number: "",
         email: "",
       },
+      authenticationStatus:null,
       // 表单验证，需要在 el-form-item 元素中增加 prop 属性
       rules: {
         realName: [
@@ -124,7 +135,7 @@ export default {
         area: [
           { required: true, message: "请选择所在地区", trigger: "change" },
         ],
-        unit: [
+        unitId: [
           { required: true, message: "请选择所在单位", trigger: "change" },
         ],
         number: [
@@ -139,8 +150,14 @@ export default {
   },
   mounted() {
     this.userType = this.$route.query.userType;
+    this.userInfo()
   },
   methods: {
+    getUserInfo() {
+      loginApi.getUserInfo().then((response) => {
+        this.authenticationStatus = response.data.userInfo.authenticationStatus;
+      });
+    },
     onSelected(data) {
       this.addressprovince = data.province.value;
       this.addresscity = data.city.value;
@@ -181,7 +198,7 @@ export default {
         loginApi.identify(this.form).then((response) => {
           if (response.code == 20000) {
             this.active = 2;
-            this.$router.push({ name: "index" });
+            // this.$router.push({ name: "index" });
           } else {
             this.$message.warning(response.message);
           }
