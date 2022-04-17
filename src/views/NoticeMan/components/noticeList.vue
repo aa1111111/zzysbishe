@@ -113,28 +113,27 @@
             <el-button @click="handleCheck(scope.row)" type="text" size="small"
               >查看</el-button
             >
-            <el-button type="text" size="small" @click="handleModify(scope.row)">编辑</el-button>
+            <el-button type="text" size="small" @click="handleModify(scope.row)"
+              >编辑</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
-      <check-dialog  ref="checkDialog" @refresh="search(1)"></check-dialog>
-      <modify-dialog ref="modifyDialog" @refresh="search(1)" ></modify-dialog>
-      <add-dialog ref="addDialog" @refresh="search(1)" ></add-dialog>
+      <check-dialog ref="checkDialog" @refresh="search(1)"></check-dialog>
+      <modify-dialog ref="modifyDialog" @refresh="search(1)"></modify-dialog>
+      <add-dialog ref="addDialog" @refresh="search(1)"></add-dialog>
     </div>
     <div class="block">
-  <el-pagination
-    layout="prev, pager, next"
-    :total="50">
-  </el-pagination>
-</div>
+      <el-pagination layout="prev, pager, next" :total="50"> </el-pagination>
+    </div>
   </div>
 </template>
 <script>
-import AddDialog from './addDialog.vue';
-import CheckDialog from './checkDialog.vue';
-import ModifyDialog from './ModifyDialog.vue';
+import AddDialog from "./addDialog.vue";
+import CheckDialog from "./checkDialog.vue";
+import ModifyDialog from "./ModifyDialog.vue";
 export default {
-  components: {CheckDialog, ModifyDialog, AddDialog},
+  components: { CheckDialog, ModifyDialog, AddDialog },
   data() {
     return {
       tableData: [
@@ -169,7 +168,7 @@ export default {
       ],
       currentRow: null,
       searchQuery: {
-        patName: ""
+        patName: "",
       },
     };
   },
@@ -236,7 +235,7 @@ export default {
 }
 .btnh :hover {
 }
-.block{
+.block {
   padding-top: 40px;
   padding-bottom: 40px;
   text-align: center;

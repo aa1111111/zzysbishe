@@ -177,44 +177,34 @@ export default {
       recordDate: "",
       multipleSelection: [],
       tableData: [],
-      isSelected:true,
+      isSelected: true,
       ids: [],
-      clockList: [
-        {
-          value: 1,
-          name: "已打卡",
-        },
-        {
-          value: 0,
-          name: "被退回",
-        },
-      ],
     };
   },
   created() {
     this.getHealthyRecordList();
   },
-  activated(){
+  activated() {
     this.getHealthyRecordList();
   },
   methods: {
     addEmpType() {
       //需要判断当天是否已经打卡
-      userDailyApi.getRecentRecord().then(response =>{
-          this.$router.push({
-              path: "userDailyIndex",
-              query: { record: response.data.healthyRecord },
-          });
-      })
+      userDailyApi.getRecentRecord().then((response) => {
+        this.$router.push({
+          path: "userDailyIndex",
+          query: { record: response.data.healthyRecord },
+        });
+      });
     },
     getRowKey(row) {
       return row.id;
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.multipleSelection = val;
-      this.ids = this.multipleSelection .map((item) => {
-        return item.uuid
-      })
+      this.ids = this.multipleSelection.map((item) => {
+        return item.uuid;
+      });
     },
     modify(uuid) {
       this.$router.push({
@@ -222,19 +212,12 @@ export default {
         query: { recordId: uuid, gai: 1 },
       });
     },
-    filterTag(value, row) {
-      return row.status === value;
-    },
-    filterCon(value, row) {
-      return row.condition === value;
-    },
     reset() {
       (this.recordDate = ""), this.getHealthyRecordList();
     },
     deleteEmpType() {
       //批量删除的方法
-      if (this.multipleSelection == [] ||
-        this.multipleSelection.length == 0) {
+      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
         this.$message.info("请选择要删除的数据");
         return;
       }
@@ -248,7 +231,7 @@ export default {
           userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getHealthyRecordList();
-            this.isSelected=false
+            this.isSelected = false;
           });
         })
         .catch(() => {
@@ -258,8 +241,8 @@ export default {
           });
         });
     },
-    search(){
-      this.getHealthyRecordList()
+    search() {
+      this.getHealthyRecordList();
     },
     getHealthyRecordList() {
       userDailyApi
@@ -272,9 +255,9 @@ export default {
             this.total = response.data.total;
             this.pageSize = response.data.size;
           } else {
-            this.tableData=[]
+            this.tableData = [];
             this.$message.warning(response.message);
-            this.$router.push({path:"login"})
+            this.$router.push({ path: "login" });
           }
         });
     },

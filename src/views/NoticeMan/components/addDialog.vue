@@ -47,8 +47,7 @@
 export default {
   data() {
     return {
-      form: {
-        },
+      form: {},
       rules: {
         // addressprovince: [
         //   { required: true, message: "请选择省份", trigger: "blur" },

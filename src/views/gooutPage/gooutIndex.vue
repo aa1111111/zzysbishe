@@ -39,13 +39,18 @@
 
         <p class="zs">部门信息</p>
         <el-form-item label="公司/学校" prop="region">
-          <el-select v-model="form.unitName" placeholder="请选择公司/学校" :disabled="true">
-            <!-- <el-option 
-            v-for="item in options"
-            :key="item.uuid"
-            :label="item.unitName"
-            :value="item.uuid">
-            </el-option> -->
+          <el-select
+            v-model="form.unitName"
+            placeholder="请选择公司/学校"
+            :disabled="true"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.uuid"
+              :label="item.unitName"
+              :value="item.uuid"
+            >
+            </el-option>
             <!-- <el-option label="宁波财经学院" value="shanghai"></el-option>
             <el-option label="浙江万里学院" value="beijing"></el-option>
             <el-option label="宁波大学" value="qq"></el-option> -->
@@ -120,30 +125,38 @@ export default {
   data() {
     return {
       form: {
-        userId:"",
+        userId: "",
         userName: "",
         phone: "",
         unitId: "",
-        unitName:"",
+        unitName: "",
         number: "",
-        leaveCategory:"",
-        destinationArea:"",
-        destination:"",
-        leaveStartTime:"",
-        leaveEndTime:"",
-        leaveDays:"",
-        reason:""
+        leaveCategory: "",
+        destinationArea: "",
+        destination: "",
+        leaveStartTime: "",
+        leaveEndTime: "",
+        leaveDays: "",
+        reason: "",
       },
 
       gai: null,
       rules: {
         // name: [{ required: true, message: "请输入", trigger: "blur" }],
         // phone: [{ required: true, message: "请输入", trigger: "blur" }],
-        leaveCategory: [{ required: true, message: "请选择", trigger: "change" }],
-        destinationArea: [{ required: true, message: "请选择", trigger: "change" }],
+        leaveCategory: [
+          { required: true, message: "请选择", trigger: "change" },
+        ],
+        destinationArea: [
+          { required: true, message: "请选择", trigger: "change" },
+        ],
         destination: [{ required: true, message: "请输入", trigger: "blur" }],
-        leaveStartTime: [{ required: true, message: "请选择", trigger: "change" }],
-        leaveEndTime: [{ required: true, message: "请选择", trigger: "change" }],
+        leaveStartTime: [
+          { required: true, message: "请选择", trigger: "change" },
+        ],
+        leaveEndTime: [
+          { required: true, message: "请选择", trigger: "change" },
+        ],
         // leaveDays: [{ required: true, message: "请输入", trigger: "blur" }],
         reason: [{ required: true, message: "请输入", trigger: "blur" }],
       },
@@ -154,26 +167,26 @@ export default {
   },
   mounted() {
     this.gai = this.$route.query.gai;
-    if(this.gai==1){
-      this.id=this.$route.query.id
-      this.getOutApplication()
-      console.log("gai"+this.gai);
+    if (this.gai == 1) {
+      this.id = this.$route.query.id;
+      this.getOutApplication();
+      console.log("gai" + this.gai);
     }
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
-     getUserInfo(){
-      returnWorkApi.getUserInfo().then(response=>{
-        this.form.userName = response.data.userInfo.userName
-        this.form.userId = response.data.userInfo.uuid
-        this.form.unitName = response.data.userInfo.unitName
-        this.form.unitId = response.data.userInfo.unitId
-        this.form.number = response.data.userInfo.number
-        this.form.phone = response.data.userInfo.phone
-        console.log(this.form)
-      })
+    getUserInfo() {
+      returnWorkApi.getUserInfo().then((response) => {
+        this.form.userName = response.data.userInfo.userName;
+        this.form.userId = response.data.userInfo.uuid;
+        this.form.unitName = response.data.userInfo.unitName;
+        this.form.unitId = response.data.userInfo.unitId;
+        this.form.number = response.data.userInfo.number;
+        this.form.phone = response.data.userInfo.phone;
+        console.log(this.form);
+      });
     },
     save() {
       this.$refs["form"].validate((valid) => {
@@ -185,28 +198,28 @@ export default {
         this.updateOutApplication();
       });
     },
-    compareDate(dateTime1,dateTime2){
-       var formatDate1 = new Date(dateTime1)
-      var formatDate2 = new Date(dateTime2)
-      if(formatDate1>=formatDate2){
-         this.$message.warning("结束日期不能早于开始日期"); 
-      }else{
-        var day = (formatDate2-formatDate1)/1000/60/60/24
-        this.form.leaveDays=day;
-        console.log(this.form.leaveDays)
+    compareDate(dateTime1, dateTime2) {
+      var formatDate1 = new Date(dateTime1);
+      var formatDate2 = new Date(dateTime2);
+      if (formatDate1 >= formatDate2) {
+        this.$message.warning("结束日期不能早于开始日期");
+      } else {
+        var day = (formatDate2 - formatDate1) / 1000 / 60 / 60 / 24;
+        this.form.leaveDays = day;
+        console.log(this.form.leaveDays);
       }
     },
-    selectTime(){
-      this.compareDate(this.form.leaveStartTime,this.form.leaveEndTime)
+    selectTime() {
+      this.compareDate(this.form.leaveStartTime, this.form.leaveEndTime);
     },
     addOutApplication() {
-      this.compareDate(this.form.leaveStartTime,this.form.leaveEndTime);
+      this.compareDate(this.form.leaveStartTime, this.form.leaveEndTime);
       goOutApi.addOutApplication(this.form).then((response) => {
         if (response.code == 20000) {
           this.$message.success("添加成功");
-            this.$router.push({
-              path: "gooutList",
-            });
+          this.$router.push({
+            path: "gooutList",
+          });
         }
       });
     },
@@ -214,16 +227,15 @@ export default {
       goOutApi.getOutApplication(this.id).then((response) => {
         if (response.code == 20000) {
           this.form = response.data.application;
-        }else{
-          this.$message.warning(response.message)
+        } else {
+          this.$message.warning(response.message);
           this.$router.push({
-              path: "returnList"
-            })
+            path: "returnList",
+          });
         }
       });
     },
     updateOutApplication() {
-      
       console.log(this.form);
       goOutApi.updateOutApplication(this.form).then((response) => {
         if (response.code == 20000) {

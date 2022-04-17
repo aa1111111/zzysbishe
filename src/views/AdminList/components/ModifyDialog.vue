@@ -17,8 +17,8 @@
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="form.userName"></el-input>
         </el-form-item>
-        <el-form-item label="用户名" prop="realName">
-          <el-input v-model="form.realName"></el-input>
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" v-model="form.password"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="form.phone"></el-input>
@@ -41,54 +41,58 @@
   </div>
 </template>
 <script>
-import loginApi from '../../../api/login';
+import adApi from '../../../api/ad';
 export default {
   data() {
     return {
       form: {
+        uuid:"",
         userName: "",
-        realName: "",
+        password: "",
         phone: "",
       },
       rules: {
-        name: [{ required: true, message: "请输入", trigger: "blur" }],
-        a: [{ required: true, message: "请输入", trigger: "blur" }],
-        c: [{ required: true, message: "请选择", trigger: "change" }],
+        userName: [{ required: true, message: "请输入", trigger: "blur" }],
+        password: [{ required: true, message: "请输入", trigger: "blur" }],
+        phone: [{ required: true, message: "请选择", trigger: "blur" }],
       },
       dialogFormVisible: false,
       id: "",
       type:"",
     };
   },
-  mounted() {},
+  mounted() {
+    
+  },
   methods: {
     onSelected(data) {
     },
     open(item,type) {
-      this.id = item.id;
-      this.type = type;
-      console.log(type)
-      this.form.a = item.shBranch;
+      this.form.uuid = item.userId;
+      this.form.userName = item.userName;
+      this.form.phone = item.phone;
+      this.form.password = item.password;
       this.dialogFormVisible = true;
     },
     handleAdd() {
-      loginApi.modifyUserInfo(this.form).then(response =>{
-        if(response.code===2){
+      adApi.saveManager(this.form).then(response =>{
+        if(response.code===20000){
           this.$message.success(response.message)
           this.handleClose();
+           this.$emit("refresh");
         }
       })
     },
-    getUserInfo(){
-      loginApi.getUserInfoById(this.id).then(response =>{
-        if(response.code===20000){
-          this.form = response.data.userInfo;
-          console.log(this.form)
-        }else{
-          this.$message.warning(response.message)
-        }
-      })
-    },
+    // getUserInfo(){
+    //   loginApi.getUserInfoById(this.id).then(response =>{
+    //     if(response.code===20000){
+    //       this.form = response.data.userInfo;
+    //       console.log(this.form)
+    //     }else{
+    //       this.$message.warning(response.message)
+    //     }
+    //   })
+    // },
     handleClose() {
       // if (this.$refs["form"]) {
       //   this.$refs["form"].resetFields();

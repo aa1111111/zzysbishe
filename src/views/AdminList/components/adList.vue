@@ -51,7 +51,7 @@
           新增
         </el-button>
         <el-col :span="21">
-          <el-button
+          <!-- <el-button
             @click="auditEmpType"
             style="
               background-color: #e2a0c9;
@@ -62,7 +62,7 @@
           >
             <i class="el-icon-delete"></i>
             批量审核
-          </el-button>
+          </el-button> -->
           <el-button
           @click="deleteEmpType"
           size="small"
@@ -104,7 +104,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="patName"
+          prop="userName"
           label="用户名"
           fixed
           align="center"
@@ -113,46 +113,33 @@
         
 
         <el-table-column
-          prop="patAddress"
+          prop="phone"
           label="手机号"
           fixed
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="condition"
-          label="身体状况"
+          prop="address"
+          label="所在地"
           fixed
           align="center"
-          :filters="[
-            { text: '健康', value: '健康' },
-            { text: '已感染', value: '已感染' },
-          ]"
-          :filter-method="filterCon"
-          filter-placement="bottom-end"
         >
-          <template slot-scope="scope">
-            <el-tag
-              :type="scope.row.condition === '健康' ? 'success' : 'danger'"
-              disable-transitions
-              >{{ scope.row.condition }}</el-tag
-            >
-          </template>
         </el-table-column>
         <el-table-column
-          prop="clockTime"
+          prop="createTime"
           label="创建时间"
           fixed
           align="center"
         >
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
-            <span style="margin-left: 10px">{{ scope.row.clockTime }}</span>
+            <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleModify(scope.row,uuid)"
+            <el-button type="text" size="small" @click="handleModify(scope.row,1)"
               >修改</el-button
             >
           </template>
@@ -161,7 +148,12 @@
     <modify-dialog ref="modifyDialog" @refresh="search()"></modify-dialog>
     </div>
     <div class="block">
-      <el-pagination layout="prev, pager, next" :total="50"> </el-pagination>
+      <el-pagination layout="prev, pager, next" 
+      :current-page="currentPage"
+        :page-size="pageSize"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrrentChange" > </el-pagination>
     </div>
   </div>
 </template>
@@ -174,6 +166,9 @@ export default {
     },
   data() {
     return {
+      currentPage:1,
+      pageSize:10,
+      total:0,
       userName:"",
       tableData: [
       ],
@@ -185,9 +180,19 @@ export default {
   created(){
     this.getManagerList()
   },
+  activated(){
+    this.getManagerList()
+  },
   methods: {
     handleModify(item,type) {
       this.$refs.modifyDialog.open(item,type);
+    },
+    handleCurrrentChange(val) {
+      this.currentPage=val
+      this.getManagerList()
+    },
+    handleSizeChange(val) {
+      console.log(`每页${val}条`)
     },
     filterTag(value, row) {
       return row.tag === value;
@@ -207,7 +212,7 @@ export default {
     handleSelectionChange (val) {
       this.multipleSelection = val;
       this.ids = this.multipleSelection .map((item) => {
-        return item.uuid
+        return item.userId
       })
     },
     addEmpType() {
@@ -217,9 +222,11 @@ export default {
       console.log(2);
     },
     getManagerList(){
-      adApi.getManagerList(this.userName).then(response =>{
+      adApi.getManagerList(this.currentPage,this.pageSize,this.userName).then(response =>{
         if(response.code===20000){
-          this.tableData = response.data.manager
+          this.tableData = response.data.items
+          this.total=response.data.total
+          console.log(this.tableData)
         }else{
           this.$message.warning(response.message)
         }

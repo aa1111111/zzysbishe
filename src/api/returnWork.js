@@ -24,6 +24,10 @@ export default {
     let url= `/zzysbishe/returnWorkApplication/deleteReturnApplication/`+uuids
     return request.remove(url)
   },
+  checkApplication(uuids){
+    let url= `/zzysbishe/returnWorkApplication/checkApplication/`+uuids
+    return request.get(url)
+  },
   getUserInfo(){
     let url = `/zzysbishe/returnWorkApplication/getUserInfo/`
     return request.get(url)
