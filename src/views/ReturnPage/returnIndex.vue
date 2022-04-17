@@ -93,8 +93,8 @@ export default {
     return {
       options: "",
       optionsCopy: "",
-      id: "",
       form: {
+        uuid:"",
         userId: "",
         userName: "",
         phone: "",
@@ -118,27 +118,28 @@ export default {
     this.getUnitList();
   },
   mounted() {
+    debugger
     this.gai = this.$route.query.gai;
     if (this.gai == 1) {
-      this.id = this.$route.query.id;
+      this.form.uuid = this.$route.query.id;
       this.getReturnApplication();
-      console.log("gai" + this.gai);
+      console.log("uuid" + this.uuid);
     }
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
-    getUserInfo() {
-      returnWorkApi.getUserInfo().then((response) => {
-        this.form.userName = response.data.userInfo.userName;
-        this.form.userId = response.data.userInfo.uuid;
-        this.form.unitId = response.data.userInfo.unitId;
-        this.form.number = response.data.userInfo.number;
-        this.form.phone = response.data.userInfo.phone;
-        console.log(this.form);
-      });
-    },
+    // getUserInfo() {
+    //   returnWorkApi.getUserInfo().then((response) => {
+    //     this.form.userName = response.data.userInfo.userName;
+    //     this.form.userId = response.data.userInfo.uuid;
+    //     this.form.unitId = response.data.userInfo.unitId;
+    //     this.form.number = response.data.userInfo.number;
+    //     this.form.phone = response.data.userInfo.phone;
+    //     console.log(this.form);
+    //   });
+    // },
     getUnitList() {
       loginApi.getUnitList().then((response) => {
         console.log(response.data.unitList);
@@ -188,9 +189,16 @@ export default {
       });
     },
     getReturnApplication() {
-      returnWorkApi.getReturnApplication(this.id).then((response) => {
+      returnWorkApi.getReturnApplication(this.form.uuid).then((response) => {
         if (response.code == 20000) {
-          this.form = response.data.application;
+          this.form.userId = response.data.application.userId;
+          this.form.userName = response.data.application.userName;
+          this.form.phone = response.data.application.phone;
+          this.form.unitId = response.data.application.unitId;
+          this.form.unitName = response.data.application.unitName;
+          this.form.number = response.data.application.number;
+          this.form.applyTime = response.data.application.applyTime;
+          this.form.remark = response.data.application.remark;
         } else {
           this.$message.warning(response.message);
           this.$router.push({
@@ -201,7 +209,7 @@ export default {
     },
     updateReturnApplication() {
       returnWorkApi
-        .updateReturnApplication(this.form, this.id)
+        .updateReturnApplication(this.form)
         .then((response) => {
           if (response.code == 20000) {
             this.$message.success("修改成功");

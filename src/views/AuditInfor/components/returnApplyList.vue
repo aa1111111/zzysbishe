@@ -205,10 +205,10 @@ export default {
       console.log(`当前页${val}`)
     },
     handleReview(item) {
-      this.$refs.reviewDialog.open(1, item);
+      this.$refs.reviewDialog.open(1,item);
     },
     handleModify(item) {
-      this.$refs.modifyDialog.openF(1, item);
+      this.$refs.modifyDialog.openF(item);
     },
     getRowKey(row) {
       return row.id;

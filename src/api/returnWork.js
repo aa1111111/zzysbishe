@@ -16,8 +16,8 @@ export default {
     let url = `/zzysbishe/returnWorkApplication/getReturnApplication/`+id
     return request.get(url)
   },
-  updateReturnApplication(returnApplication,id){
-    let url = `/zzysbishe/returnWorkApplication/updateReturnApplication/`+id
+  updateReturnApplication(returnApplication){
+    let url = `/zzysbishe/returnWorkApplication/updateReturnApplication`
     return request.put(url,returnApplication)
   },
   deleteReturnApplication(uuids){

@@ -368,14 +368,13 @@ export default {
       //   this.form.addressdist = data.area.value
     },
     openF(item) {
-      this.Fform.userId = item.uuid;
+      debugger
+      this.Fform.uuid = item.uuid;
       this.Fform.userName = item.userName;
-      this.Fform.phone = item.phone;
-      this.Fform.unitId = item.unitId;
-      this.Fform.number = item.number;
       this.Fform.applyTime = item.applyTime;
       this.Fform.remark = item.remark;
       this.dialogFormVisible = true;
+      this.getReturnApplication();
     },
     openG(item) {
       this.Gform.userId = item.userId;
@@ -407,7 +406,7 @@ export default {
     handleAddF() {
       this.$refs["Fform"].validate((valid) => {
         if (valid) {
-          this.addHealthyRecord();
+          this.updateReturnApplication();
           this.$emit("refresh");
           this.handleClose();
         }
@@ -440,12 +439,26 @@ export default {
       // this.id = "";
     },
     getReturnApplication() {
-      returnWorkApi.getReturnApplication(this.id).then((response) => {
+      returnWorkApi.getReturnApplication(this.Fform.uuid).then((response) => {
         if (response.code == 20000) {
-          this.Fform = response.data.application;
+          this.Fform.number = response.data.application.number;
+          this.Fform.phone = response.data.application.phone;
+          this.Fform.userId = response.data.application.userId;
+          this.Fform.unitId = response.data.application.unitId;
         } else {
+          this.$message.warning(response.message);
         }
       });
+    },
+    updateReturnApplication() {
+      returnWorkApi
+        .updateReturnApplication(this.Fform)
+        .then((response) => {
+          if (response.code == 20000) {
+            this.$message.success("修改成功");
+            handleClose();
+          }
+        });
     },
     compareDate(dateTime1, dateTime2) {
       var formatDate1 = new Date(dateTime1);
