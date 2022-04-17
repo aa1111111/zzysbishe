@@ -114,8 +114,9 @@
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.status == 0">未通过</span>
+            <span v-if="scope.row.status == 0">未审核</span>
             <span v-if="scope.row.status == 1">已通过</span>
+            <span v-if="scope.row.status == 2">未通过</span>
           </template>
         </el-table-column>
         <el-table-column

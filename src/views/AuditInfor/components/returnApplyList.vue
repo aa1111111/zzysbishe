@@ -6,7 +6,7 @@
           <div class="search-item">
             <span style="width: 100px">姓名</span>
             <el-input
-              v-model="name"
+              v-model="userName"
               size="small"
               placeholder="请输入"
             ></el-input>
@@ -123,8 +123,9 @@
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.status == 0">未通过</span>
+            <span v-if="scope.row.status == 0">未审核</span>
             <span v-if="scope.row.status == 1">已通过</span>
+            <span v-if="scope.row.status == 2">未通过</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -184,7 +185,7 @@ export default {
       currentPage: 1,
       total: 0,
       applyDate: "",
-      name: "",
+      userName: "",
       tableData: [],
       multipleSelection: [],
       ids: [],
@@ -281,7 +282,7 @@ export default {
     },
     getWorkApplicationList() {
       returnWorkApi
-        .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate)
+        .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate,this.userName)
         .then((response) => {
           console.log(response.data);
           if (response.data.items.length > 0) {

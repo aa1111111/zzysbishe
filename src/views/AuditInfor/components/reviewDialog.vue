@@ -17,28 +17,24 @@
         label-position="left"
         :rules="rules"
       >
-        <el-form-item label="审核是否通过:" prop="branchCode">
+        <el-form-item label="审核是否通过:" prop="status">
           <el-select
             filterable
             clearable
             size="small"
-            v-model="form.branchCode"
+            v-model="form.status"
           >
-            <el-option
-              v-for="item in branchList"
-              :key="item.value"
-              :label="item.shName"
-              :value="item.shId"
-            />
+            <el-option label="通过" value="1"></el-option>
+            <el-option label="不通过" value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核不通过原因:" prop="reason">
+        <el-form-item label="审核不通过原因:" prop="msgBack">
           <el-input
             type="textarea"
             :autosize="{ minRows: 5, maxRows: 8 }"
             placeholder="请输入内容"
             style="width: 90%"
-            v-model="form.reason"
+            v-model="form.msgBack"
           >
           </el-input>
         </el-form-item>

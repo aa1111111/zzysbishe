@@ -4,8 +4,8 @@ import * as request from '@/utils/request'
  * 接口封装
  */
 export default {
-  getWorkApplicationList(page,limit,applyDate) {
-    let url = `/zzysbishe/returnWorkApplication/getWorkApplicationList/`+page+`/`+limit+`?applyDate=`+applyDate
+  getWorkApplicationList(page,limit,applyDate,userName) {
+    let url = `/zzysbishe/returnWorkApplication/getWorkApplicationList/`+page+`/`+limit+`?applyDate=`+applyDate+`&&userName=`+userName
     return request.get(url)
   },
   addReturnApplication(returnApplication){
