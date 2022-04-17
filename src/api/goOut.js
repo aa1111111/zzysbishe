@@ -4,8 +4,8 @@ import * as request from '@/utils/request'
  * 接口封装
  */
 export default {
-  getOutApplicationList(page,limit,applyDate) {
-    let url = `/zzysbishe/goOutApplication/getOutApplicationList/`+page+`/`+limit+`?applyDate=`+applyDate
+  getOutApplicationList(page,limit,applyDate,userName) {
+    let url = `/zzysbishe/goOutApplication/getOutApplicationList/`+page+`/`+limit+`?applyDate=`+applyDate+`&&userName=`+userName
     return request.get(url)
   },
   addOutApplication(goOutApplication){
@@ -24,8 +24,12 @@ export default {
     let url= `/zzysbishe/goOutApplication/deleteOutApplication/`+uuids
     return request.remove(url)
   },
-  getUserInfo(){
-    let url = `/zzysbishe/goOutApplication/getUserInfo/`
+  checkApplication(uuids){
+    let url= `/zzysbishe/goOutApplication/checkApplication/`+uuids
+    return request.get(url)
+  },
+  getHistoryJourney(page,limit,userName){
+    let url= `/zzysbishe/goOutApplication/getHistoryJourney/`+page+`/`+limit+`?userName=`+userName
     return request.get(url)
   }
   

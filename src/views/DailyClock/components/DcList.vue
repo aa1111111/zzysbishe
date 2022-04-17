@@ -6,7 +6,7 @@
           <div class="search-item">
             <span style="width: 100px">姓名</span>
             <el-input
-              v-model="userName"
+              v-model="querySearch.userName"
               size="small"
               placeholder="请输入"
             ></el-input>
@@ -14,14 +14,14 @@
             <el-date-picker
               type="datetime"
               placeholder="选择日期"
-              v-model="recordDate"
+              v-model="querySearch.recordDate"
               value-format="yyyy-MM-dd"
               format="yyyy-MM-dd"
               style="width: 100%"
             ></el-date-picker>
           </div>
         </el-col>
-        <el-col :span="6">
+        <!-- <el-col :span="6">
           <div class="search-item">
             <span style="width: 150px">打卡状态</span>
             <el-select filterable clearable size="small" v-model="status">
@@ -29,7 +29,7 @@
               <el-option key="1" label="未打卡" value="1" />
             </el-select>
           </div>
-        </el-col>
+        </el-col> -->
 
         <el-col :span="6">
           <div class="search-item">
@@ -38,7 +38,7 @@
               filterable
               clearable
               size="small"
-              v-model="healthCondition"
+              v-model="querySearch.healthCondition"
             >
               <el-option key="0" label="健康" value="0" />
               <el-option key="1" label="已感染" value="1" />
@@ -64,7 +64,7 @@
         </el-button> -->
         <el-col :span="12">
           <el-button
-            @click="updateHealthyRecord"
+            @click="auditEmpType"
             style="
               background-color: #e2a0c9;
               color: #ffffff;
@@ -166,12 +166,6 @@
           width="100"
           fixed
           align="center"
-          :filters="[
-            { text: '已打卡', value: '已打卡' },
-            { text: '被退回', value: '被退回' },
-          ]"
-          :filter-method="filterTag"
-          filter-placement="bottom-end"
         >
           <template slot-scope="scope">
             <el-tag
@@ -183,7 +177,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="condition"
+          prop="healthCondition"
           label="身体状况"
           width="100"
           fixed
@@ -210,10 +204,10 @@
             <!-- <el-button @click="handleCheck(scope.row)" type="text" size="small"
               >查看</el-button
             > -->
-            <el-button type="text" size="small" @click="handleModify(scope.row)"
+            <el-button type="text" size="small" @click="handleModify(scope.row,1)"
               >修改</el-button
             >
-            <el-button type="text" size="small" @click="handleReview(scope.row)"
+            <el-button type="text" size="small" v-if="scope.row.status == 0" @click="handleReview(scope.row)"
               >审核</el-button
             >
           </template>
@@ -247,12 +241,17 @@ export default {
   },
   data() {
     return {
-      pageSize: 1,
-      currentPage: 10,
+      pageSize: 10,
+      currentPage: 1,
       total: 0,
       userName: "",
       recordDate: "",
       status: "",
+      querySearch:{
+        userName:"",
+        recordDate:"",
+        healthCondition:""
+      },
       healthCondition: "",
       multipleSelection: [],
       ids: [],
@@ -260,7 +259,7 @@ export default {
     };
   },
   mounted() {
-    this.getHealthyRecordList();
+    this.getRecordDtoList();
   },
   methods: {
     // handleCheck(item) {
@@ -275,8 +274,8 @@ export default {
         return item.uuid;
       });
     },
-    handleModify(item) {
-      this.$refs.modifyDialog.open(1, item);
+    handleModify(item,type) {
+      this.$refs.modifyDialog.openH(item,type);
     },
     handleReview(item) {
       this.$refs.reviewDialog.open(1, item);
@@ -286,7 +285,7 @@ export default {
       this.recordDate = "";
       this.status = "";
       this.healthCondition = "";
-      this.getHealthyRecordList();
+      this.getRecordDtoList();
     },
     deleteEmpType() {
       //批量删除的方法
@@ -303,7 +302,7 @@ export default {
           //参数
           userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
             this.$message.success("删除成功");
-            this.getHealthyRecordList();
+            this.getRecordDtoList();
             this.isSelected = false;
           });
         })
@@ -314,12 +313,37 @@ export default {
           });
         });
     },
-    search() {
-      this.getHealthyRecordList();
+    auditEmpType() {
+      //批量审核的方法
+      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
+        this.$message.info("请选择要审核的数据");
+        return;
+      }
+      this.$confirm("批量审核操作不可逆，是否继续 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //参数
+          userDailyApi.checkHealthyRecord(this.ids).then((response) => {
+            this.$message.success("审核成功");
+            this.getRecordDtoList();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消审核",
+          });
+        });
     },
-    getHealthyRecordList() {
+    search() {
+      this.getRecordDtoList();
+    },
+    getRecordDtoList() {
       userDailyApi
-        .getHealthyRecordList(this.pageSize, this.currentPage, this.querySearch)
+        .getRecordDtoList(this.currentPage, this.pageSize, this.querySearch)
         .then((response) => {
           console.log(response.data);
           if (response.data.items.length > 0) {

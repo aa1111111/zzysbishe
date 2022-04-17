@@ -128,7 +128,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="modify(scope.row.uuid)"
+            <el-button type="text" size="small" v-if="scope.row.status!=1" @click="modify(scope.row.uuid)"
               >修改</el-button
             >
           </template>
@@ -154,6 +154,7 @@ export default {
       pageSize: 10,
       currentPage: 1,
       total: 0,
+      userName:"",
       applyDate: "",
       multipleSelection: [],
       tableData: [],
@@ -233,15 +234,16 @@ export default {
     },
     getWorkApplicationList() {
       returnWorkApi
-        .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate)
+        .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate,this.userName)
         .then((response) => {
           console.log(response.data);
-          if (response.data.items.length > 0) {
+          if (response.code ==20000) {
             this.tableData = response.data.items;
             this.currentPage = response.data.current;
             this.total = response.data.total;
             this.pageSize = response.data.size;
           } else {
+            debugger
             this.tableData = [];
             this.$message.warning(response.message);
           }

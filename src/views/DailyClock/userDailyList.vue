@@ -127,12 +127,6 @@
           width="100"
           fixed
           align="center"
-          :filters="[
-            { text: '已打卡', value: '已打卡' },
-            { text: '被退回', value: '被退回' },
-          ]"
-          :filter-method="filterTag"
-          filter-placement="bottom-end"
         >
           <template slot-scope="scope">
             <el-tag
@@ -249,7 +243,7 @@ export default {
         .getHealthyRecordList(this.currentPage, this.pageSize, this.recordDate)
         .then((response) => {
           console.log(response.data);
-          if (response.data.items.length > 0) {
+          if (response.code==20000) {
             this.tableData = response.data.items;
             this.currentPage = response.data.current;
             this.total = response.data.total;
@@ -257,7 +251,6 @@ export default {
           } else {
             this.tableData = [];
             this.$message.warning(response.message);
-            this.$router.push({ path: "login" });
           }
         });
     },

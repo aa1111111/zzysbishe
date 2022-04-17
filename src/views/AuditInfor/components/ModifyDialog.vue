@@ -171,6 +171,7 @@
                 placeholder="选择日期"
                 v-model="Gform.leaveStartTime"
                 style="width: 100%"
+                @change="selectTime"
               ></el-date-picker>
             </el-col>
             <el-col class="line" :span="2">-</el-col>
@@ -277,6 +278,7 @@
 </template>
 <script>
 import returnWorkApi from "../../../api/returnWork";
+import goOutApi from "../../../api/goOut";
 export default {
   data() {
     return {
@@ -377,30 +379,22 @@ export default {
       this.getReturnApplication();
     },
     openG(item) {
-      this.Gform.userId = item.userId;
+      this.Gform.uuid = item.uuid;
       this.Gform.userName = item.userName;
       this.Gform.phone = item.phone;
-      this.Gform.unitId = item.unitId;
-      this.Gform.unitName = item.unitName;
-      this.Gform.number = item.number;
+      this.Gform.destination = item.realDestination;
       this.Gform.leaveCategory = item.leaveCategory;
-      this.Gform.destinationArea = item.destinationArea;
-      this.Gform.destination = item.destination;
       this.Gform.leaveStartTime = item.leaveStartTime;
-      this.Gform.leaveEndTime = item.leaveEndTime;
-      this.Gform.leaveDays = item.leaveDays;
+      this.Gform.status = item.status;
       this.Gform.reason = item.reason;
       this.dialogFormVisible = true;
+      this.getOutApplication();
     },
     openH(item) {
-      this.Hform.userId = item.userId;
+      this.Hform.uuid = item.uuid;
       this.Hform.userName = item.userName;
-      this.Hform.phone = item.phone;
-      this.Hform.unitId = item.unitId;
-      this.Hform.number = item.number;
-      this.Hform.h4 = item.h4;
-      this.Hform.h5 = item.h5;
-      this.Hform.h6 = item.h6;
+      this.Hform.recordTime = item.recordTime;
+      this.Hform.healthCondition = item.healthCondition;
       this.dialogFormVisible = true;
     },
     handleAddF() {
@@ -415,7 +409,7 @@ export default {
     handleAddG() {
       this.$refs["Gform"].validate((valid) => {
         if (valid) {
-          this.addHealthyRecord();
+           this.updateOutApplication();
           this.$emit("refresh");
           this.handleClose();
         }
@@ -456,9 +450,61 @@ export default {
         .then((response) => {
           if (response.code == 20000) {
             this.$message.success("修改成功");
-            handleClose();
+            this.$emit("refresh");
+            this.handleClose();
           }
         });
+    },
+    getOutApplication() {
+      goOutApi.getOutApplication(this.Gform.uuid).then((response) => {
+        if (response.code == 20000) {
+          this.Gform.number = response.data.application.number;
+          this.Gform.userId = response.data.application.userId;
+          this.Gform.unitId = response.data.application.unitId;
+          this.Gform.destinationArea = response.data.application.destinationArea;
+          this.Gform.leaveEndTime = response.data.application.leaveEndTime;
+          this.Gform.leaveDays = response.data.application.leaveDays;
+        } else {
+          this.$message.warning(response.message);
+        }
+      });
+    },
+    updateOutApplication() {
+      console.log(this.Gform);
+      goOutApi.updateOutApplication(this.Gform).then((response) => {
+        if (response.code == 20000) {
+          this.$message.success("修改成功");
+          this.$emit("refresh");
+          this.handleClose();
+        }
+      });
+    },
+     getHealthyRecordInfo() {
+      userDailyApi.getHealthyRecordInfo(this.recordId).then((response) => {
+        if (response.code == 20000) {
+          this.form = response.data.healthyRecord;
+          this.addressprovince =
+            response.data.healthyRecord.currentLocation.split("-")[0];
+          this.addresscity =
+            response.data.healthyRecord.currentLocation.split("-")[1];
+          this.addressdist =
+            response.data.healthyRecord.currentLocation.split("-")[2];
+        }
+      });
+    },
+     updateHealthyRecord() {
+      console.log(this.form);
+      userDailyApi.updateHealthyRecord(this.form).then((response) => {
+        if (response.code == 20000) {
+          this.$message.success("修改成功");
+          setTimeout(() => {
+            this.$router.push({
+              path: "userDailyList",
+              query: { userType: this.userType },
+            });
+          }, 3000);
+        }
+      });
     },
     compareDate(dateTime1, dateTime2) {
       var formatDate1 = new Date(dateTime1);
@@ -466,13 +512,13 @@ export default {
       if (formatDate1 >= formatDate2) {
         this.$message.warning("结束日期不能早于开始日期");
       } else {
-        var day = (formatDate2 - formatDate1) / 1000 / 60 / 60 / 24;
-        this.form.leaveDays = day;
-        console.log(this.form.leaveDays);
+        var day =Math.ceil((formatDate2 - formatDate1) / 1000 / 60 / 60 / 24);
+        this.Gform.leaveDays = day;
+        console.log(this.Gform.leaveDays);
       }
     },
     selectTime() {
-      this.compareDate(this.form.leaveStartTime, this.form.leaveEndTime);
+      this.compareDate(this.Gform.leaveStartTime, this.Gform.leaveEndTime);
     },
   },
 };

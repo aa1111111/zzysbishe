@@ -6,7 +6,7 @@
           <div class="search-item">
             <span style="width: 100px">姓名</span>
             <el-input
-              v-model="name"
+              v-model="userName"
               size="small"
               placeholder="请输入"
             ></el-input>
@@ -107,7 +107,7 @@
         <el-table-column prop="phone" label="联系方式" fixed align="center">
         </el-table-column>
         <el-table-column
-          prop="patAddress"
+          prop="destination"
           label="外出地点"
           fixed
           align="center"
@@ -115,16 +115,17 @@
         </el-table-column>
         <el-table-column prop="reason" label="外出原因" fixed align="center">
         </el-table-column>
-        <el-table-column prop="time" label="外出时间" fixed align="center">
+        <el-table-column prop="leaveStartTime" label="外出时间" fixed align="center">
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.status == 0">未通过</span>
+            <span v-if="scope.row.status == 0">未审核</span>
             <span v-if="scope.row.status == 1">已通过</span>
+            <span v-if="scope.row.status == 2">未通过</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="statusly"
+          prop="msgBack"
           label="审核不通过理由"
           fixed
           align="center"
@@ -138,7 +139,7 @@
             <el-button type="text" size="small" @click="handleModify(scope.row)"
               >修改</el-button
             >
-            <el-button type="text" size="small" @click="handleReview(scope.row)"
+            <el-button type="text" size="small" v-if="scope.row.status == 0" @click="handleReview(scope.row,2)"
               >审核</el-button
             >
           </template>
@@ -166,7 +167,7 @@ import AddDialog from "./addDialog.vue";
 import CheckDialog from "./checkDialog.vue";
 import ModifyDialog from "./ModifyDialog.vue";
 import reviewDialog from "./reviewDialog.vue";
-import returnWorkApi from "../../../api/returnWork";
+import goOutApi from "../../../api/goOut";
 export default {
   components: {
     reviewDialog,
@@ -180,7 +181,7 @@ export default {
       currentPage: 1,
       total: 0,
       applyDate: "",
-      name: "",
+      userName: "",
       // isSelected:true,
       tableData: [],
       multipleSelection: [],
@@ -188,7 +189,7 @@ export default {
     };
   },
   created(){
-    this.getWorkApplicationList();
+    this.getOutApplicationList();
   },
   methods: {
     // handleCheck(item) {
@@ -197,11 +198,11 @@ export default {
     handleCurrrentChange(val) {
       console.log(`当前页${val}`)
     },
-    handleReview(item) {
-      this.$refs.reviewDialog.open(1, item);
+    handleReview(item,type) {
+      this.$refs.reviewDialog.openG(item,type);
     },
     handleModify(item) {
-      this.$refs.modifyDialog.openG(1, item);
+      this.$refs.modifyDialog.openG(item);
     },
     getRowKey(row) {
       return row.id;
@@ -214,8 +215,8 @@ export default {
     },
     reset() {
       this.applyDate = "";
-      this.name = "";
-      this.getWorkApplicationList();
+      this.userName = "";
+      this.getOutApplicationList();
     },
     // addEmpType() {
     //   this.$refs.addDialog.open(1);
@@ -233,9 +234,9 @@ export default {
       })
         .then(() => {
           //参数
-          returnWorkApi.deleteReturnApplication(this.ids).then((response) => {
+          goOutApi.deleteReturnApplication(this.ids).then((response) => {
             this.$message.success("删除成功");
-            this.getWorkApplicationList();
+            this.getOutApplicationList();
             // this.isSelected = false;
           });
         })
@@ -258,10 +259,9 @@ export default {
       })
         .then(() => {
           //参数
-           returnWorkApi.checkApplication(this.ids).then((response) => {
-             debugger
+           goOutApi.checkApplication(this.ids).then((response) => {
             this.$message.success("成功");
-            this.getWorkApplicationList();
+            this.getOutApplicationList();
           });
         })
         .catch(() => {
@@ -272,14 +272,14 @@ export default {
         });
     },
     search() {
-      this.getWorkApplicationList();
+      this.getOutApplicationList();
     },
-    getWorkApplicationList() {
-      returnWorkApi
-        .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate)
+    getOutApplicationList() {
+      goOutApi
+        .getOutApplicationList(this.currentPage, this.pageSize, this.applyDate,this.userName)
         .then((response) => {
           console.log(response.data);
-          if (response.data.items.length > 0) {
+          if (response.code==20000) {
             this.tableData = response.data.items;
             this.currentPage = response.data.current;
             this.total = response.data.total;

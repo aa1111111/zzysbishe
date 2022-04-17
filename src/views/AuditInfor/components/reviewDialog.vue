@@ -59,28 +59,24 @@
         label-position="left"
         :rules="rules"
       >
-        <el-form-item label="审核是否通过:" prop="branchCode2">
+        <el-form-item label="审核是否通过:" prop="status">
           <el-select
             filterable
             clearable
             size="small"
-            v-model="form2.branchCode2"
+            v-model="form2.status"
           >
-            <el-option
-              v-for="item in branchList"
-              :key="item.value"
-              :label="item.shName"
-              :value="item.shId"
-            />
+           <el-option label="通过" value="1"></el-option>
+            <el-option label="不通过" value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核不通过原因:" prop="reason2">
+        <el-form-item label="审核不通过原因:" prop="msgBack">
           <el-input
             type="textarea"
             :autosize="{ minRows: 5, maxRows: 8 }"
             placeholder="请输入内容"
             style="width: 90%"
-            v-model="form2.reason2"
+            v-model="form2.msgBack"
           >
           </el-input>
         </el-form-item>
@@ -99,6 +95,7 @@
 </template>
 <script>
 import returnWorkApi from "../../../api/returnWork";
+import goOutApi from "../../../api/goOut";
 export default {
   data() {
     return {
@@ -116,8 +113,9 @@ export default {
       dialogFormVisible: false,
       branchList: [],
       form2: {
-        reason2: "",
-        branchCode2: "",
+        uuid:"",
+        status: "",
+        msgBack: "",
       },
       id: "",
     };
@@ -128,15 +126,16 @@ export default {
       this.manage = type
       this.dialogFormVisible = true;
     },
-    open(item) {
-      this.id = item.id;
-      
+    openG(item,type) {
+      this.form2.uuid = item.uuid;
+      this.manage = type
       this.dialogFormVisible = true;
     },
     handleAddR() {
       this.updateReturnApplication()
     },
     handleAddG() {
+       this.updateOutApplication();
       
     },
     handleClose() {
@@ -153,9 +152,24 @@ export default {
         .then((response) => {
           if (response.code == 20000) {
             this.$message.success("修改成功");
+            this.$emit("refresh");
             this.handleClose();
+          }else{
+            this.$message.warning(response.message);
           }
         });
+    },
+    updateOutApplication() {
+      console.log(this.form2);
+      goOutApi.updateOutApplication(this.form2).then((response) => {
+        if (response.code == 20000) {
+          this.$message.success("修改成功");
+          this.$emit("refresh");
+          this.handleClose();
+        }else{
+          this.$message.warning(response.message);
+        }
+      });
     },
   },
   mounted() {

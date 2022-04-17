@@ -126,8 +126,9 @@
         </el-table-column>
         <el-table-column prop="status" label="审核状态" fixed align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.status == 0">未通过</span>
+            <span v-if="scope.row.status == 0">未审核</span>
             <span v-if="scope.row.status == 1">已通过</span>
+            <span v-if="scope.row.status == 2">未通过</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -139,7 +140,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="modify(scope.row.uuid)"
+            <el-button type="text" size="small" v-if="scope.row.status!=1" @click="modify(scope.row.uuid)"
               >修改</el-button
             >
           </template>
@@ -241,7 +242,7 @@ export default {
         .getOutApplicationList(this.currentPage, this.pageSize, this.applyDate)
         .then((response) => {
           console.log(response.data);
-          if (response.data.items.length > 0) {
+          if (response.code ==20000) {
             this.tableData = response.data.items;
             this.currentPage = response.data.current;
             this.total = response.data.total;
@@ -249,7 +250,6 @@ export default {
           } else {
             this.tableData = [];
             this.$message.warning(response.message);
-            this.$router.push({ path: "login" });
           }
         });
     },

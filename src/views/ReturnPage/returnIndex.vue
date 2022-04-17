@@ -119,27 +119,31 @@ export default {
     this.getUnitList();
   },
   mounted() {
+    
     this.gai = this.$route.query.gai;
     if (this.gai == 1) {
       this.form.uuid = this.$route.query.id;
       this.getReturnApplication();
       console.log("uuid" + this.uuid);
+    }else{
+      this.getUserInfo();
     }
+    
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
-    // getUserInfo() {
-    //   returnWorkApi.getUserInfo().then((response) => {
-    //     this.form.userName = response.data.userInfo.userName;
-    //     this.form.userId = response.data.userInfo.uuid;
-    //     this.form.unitId = response.data.userInfo.unitId;
-    //     this.form.number = response.data.userInfo.number;
-    //     this.form.phone = response.data.userInfo.phone;
-    //     console.log(this.form);
-    //   });
-    // },
+    getUserInfo() {
+      loginApi.getUserInfo().then((response) => {
+        this.form.userName = response.data.userInfo.userName;
+        this.form.userId = response.data.userInfo.uuid;
+        this.form.unitId = response.data.userInfo.unitId;
+        this.form.number = response.data.userInfo.number;
+        this.form.phone = response.data.userInfo.phone;
+        console.log(this.form);
+      });
+    },
     getUnitList() {
       loginApi.getUnitList().then((response) => {
         console.log(response.data.unitList);

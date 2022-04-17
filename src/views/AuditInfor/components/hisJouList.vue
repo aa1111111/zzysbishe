@@ -2,15 +2,15 @@
   <div>
     <div class="search">
       <el-row :gutter="90">
-        <el-col :span="12">
+        <el-col :span="6">
           <div class="search-item">
             <span style="width: 100px">姓名</span>
             <el-input
-              v-model="name"
+              v-model="userName"
               size="small"
               placeholder="请输入"
             ></el-input>
-            <span style="width: 100px">日期</span>
+            <!-- <span style="width: 100px">日期</span>
             <el-date-picker
               type="datetime"
               placeholder="选择日期"
@@ -18,7 +18,7 @@
               value-format="yyyy-MM-dd"
               format="yyyy-MM-dd"
               style="width: 100%"
-            ></el-date-picker>
+            ></el-date-picker> -->
           </div>
         </el-col>
         <el-col :span="5">
@@ -60,14 +60,14 @@
           新增
         </el-button> -->
 
-        <el-button
+        <!-- <el-button
           @click="deleteEmpType"
           size="small"
           :disabled="this.multipleSelection.length === 0"
         >
           <i class="el-icon-delete"></i>
           删除
-        </el-button>
+        </el-button> -->
       </el-row>
     </div>
     <div class="box2">
@@ -99,7 +99,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="patName"
+          prop="userName"
           label="姓名"
           width="100"
           fixed
@@ -107,7 +107,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="tel"
+          prop="phone"
           label="联系方式"
           width="100"
           fixed
@@ -115,24 +115,40 @@
         >
         </el-table-column>
         <el-table-column
-          prop="patAddress"
+          prop="destinationArea"
+          label="出行范围"
+          fixed
+          align="center"
+        >
+        <template slot-scope="scope">
+          <span v-if="scope.row.destinationArea == 0">宁波市内</span>
+          <span v-if="scope.row.destinationArea == 1">浙江省内宁波市外</span>
+          <span v-if="scope.row.destinationArea == 2">浙江省外</span>
+        </template>
+        </el-table-column>
+        <el-table-column
+          prop="destination"
           label="出行地点"
           fixed
           align="center"
         >
         </el-table-column>
-        <el-table-column prop="remark" label="备注" fixed align="center">
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" width="130" align="center">
+        <el-table-column prop="healthCondition" label="健康状态" fixed align="center">
           <template slot-scope="scope">
+            <span v-if="scope.row.healthCondition == 0">健康</span>
+            <span v-if="scope.row.healthCondition == 1">已感染</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column fixed="right" label="操作" width="130" align="center">
+          <template slot-scope="scope"> -->
             <!-- <el-button @click="handleCheck(scope.row)" type="text" size="small"
               >查看</el-button
             > -->
-            <el-button type="text" size="small" @click="handleModify(scope.row)"
+            <!-- <el-button type="text" size="small" @click="handleModify(scope.row)"
               >修改</el-button
             >
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <!-- <check-dialog ref="checkDialog" @refresh="search(1)"></check-dialog> -->
       <modify-dialog ref="modifyDialog" @refresh="search(1)"></modify-dialog>
@@ -153,6 +169,7 @@
 import AddDialog from "./addDialog.vue";
 import CheckDialog from "./checkDialog.vue";
 import ModifyDialog from "./ModifyDialog.vue";
+import goOutApi from "../../../api/goOut";
 export default {
   components: {
     CheckDialog,
@@ -162,46 +179,17 @@ export default {
   data() {
     return {
       tableData: [
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "13435442668",
-          patName: "王小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "562232333",
-          patName: "赵小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "12223465",
-          patName: "钱小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "1234567676",
-          patName: "孙小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
       ],
       pageSize: 10,
       currentPage: 1,
       total: 0,
-      recordDate: "",
-      name: "",
+      userName: "",
       multipleSelection: [],
       ids: [],
     };
   },
   mounted() {
-    this.getHealthyRecordList();
+    this.getHistoryJourney();
   },
   methods: {
     // handleCheck(item) {
@@ -225,46 +213,46 @@ export default {
     reset() {
       this.recordDate = "";
       this.name = "";
-      this.getHealthyRecordList();
+      this.getHistoryJourney();
     },
     // addEmpType() {
     //   this.$refs.addDialog.open(1);
     // },
-    deleteEmpType() {
-      //批量删除的方法
-      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
-        this.$message.info("请选择要删除的数据");
-        return;
-      }
-      this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          //参数
-          userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
-            this.$message.success("删除成功");
-            this.getHealthyRecordList();
-            this.isSelected = false;
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
-    },
+    // deleteEmpType() {
+    //   //批量删除的方法
+    //   if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
+    //     this.$message.info("请选择要删除的数据");
+    //     return;
+    //   }
+    //   this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "warning",
+    //   })
+    //     .then(() => {
+    //       //参数
+    //       goOutApi.deleteHealthyRecord(this.ids).then((response) => {
+    //         this.$message.success("删除成功");
+    //         this.getHealthyRecordList();
+    //         this.isSelected = false;
+    //       });
+    //     })
+    //     .catch(() => {
+    //       this.$message({
+    //         type: "info",
+    //         message: "已取消删除",
+    //       });
+    //     });
+    // },
     search() {
-      this.getHealthyRecordList();
+      this.getHistoryJourney();
     },
-    getHealthyRecordList() {
-      userDailyApi
-        .getHealthyRecordList(this.currentPage, this.pageSize, this.recordDate)
+    getHistoryJourney() {
+      goOutApi
+        .getHistoryJourney(this.currentPage,this.pageSize,this.userName)
         .then((response) => {
           console.log(response.data);
-          if (response.data.items.length > 0) {
+          if (response.code==20000) {
             this.tableData = response.data.items;
             this.currentPage = response.data.current;
             this.total = response.data.total;
@@ -272,7 +260,6 @@ export default {
           } else {
             this.tableData = [];
             this.$message.warning(response.message);
-            this.$router.push({ path: "login" });
           }
         });
     },

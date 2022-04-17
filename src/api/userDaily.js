@@ -27,6 +27,14 @@ export default {
   getRecentRecord(){
     let url= `/zzysbishe/healthyRecord/getRecentRecord/`
     return request.get(url)
+  },
+  getRecordDtoList(page,limit,querySearch){
+    let url = `/zzysbishe/healthyRecord/getRecordDtoList/`+page+`/`+limit
+    return request.post(url,querySearch)
+  },
+  checkHealthyRecord(uuids){
+    let url= `/zzysbishe/healthyRecord/checkHealthyRecord/`+uuids
+    return request.get(url)
   }
   
 }

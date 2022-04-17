@@ -27,10 +27,6 @@ export default {
   checkApplication(uuids){
     let url= `/zzysbishe/returnWorkApplication/checkApplication/`+uuids
     return request.get(url)
-  },
-  getUserInfo(){
-    let url = `/zzysbishe/returnWorkApplication/getUserInfo/`
-    return request.get(url)
   }
   
 }

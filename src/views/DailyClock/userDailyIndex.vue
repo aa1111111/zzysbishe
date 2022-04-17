@@ -110,7 +110,7 @@
 
         <el-form-item class="btn">
           <el-button
-            v-show="this.gai == null && this.disabled != disabled"
+            v-show="this.gai == null && this.disabled == false"
             type="primary"
             @click="save"
             >立即创建</el-button
@@ -133,7 +133,7 @@ export default {
       addressprovince: "",
       addresscity: "",
       addressdist: "",
-      disabled: "",
+      disabled: false,
       form: {
         currentLocation: "",
         isHealthy: null,
@@ -171,23 +171,28 @@ export default {
   },
   mounted() {
     console.log(this.$route.query.record);
-    if (this.$route.query.record != null) {
-      this.form = this.$route.query.record;
-      this.addressprovince =
-        this.$route.query.record.currentLocation.split("-")[0];
-      console.log("省：" + this.addressprovince);
-      this.addresscity = this.$route.query.record.currentLocation.split("-")[1];
-      console.log("市：" + this.addresscity);
-      this.addressdist = this.$route.query.record.currentLocation.split("-")[2];
-      console.log("区：" + this.addressdist);
-      this.disabled = "disabled";
-    }
+   
+    
+     setTimeout(() => {
+        if (this.$route.query.record != null) {
+          this.form = this.$route.query.record;
+          this.addressprovince =
+            this.$route.query.record.currentLocation.split("-")[0];
+          console.log("省：" + this.addressprovince);
+          this.addresscity = this.$route.query.record.currentLocation.split("-")[1];
+          console.log("市：" + this.addresscity);
+          this.addressdist = this.$route.query.record.currentLocation.split("-")[2];
+          console.log("区：" + this.addressdist);
+          this.disabled = true;
+        }
+      }, 3000);
     console.log(this.disabled);
-    this.recordId = this.$route.query.recordId;
+
     this.gai = this.$route.query.gai;
     console.log(this.recordId);
     console.log(this.gai);
     if (this.gai == 1) {
+      this.recordId = this.$route.query.recordId;
       this.getHealthyRecordInfo();
     }
   },

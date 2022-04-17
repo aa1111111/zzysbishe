@@ -44,13 +44,13 @@
             placeholder="请选择公司/学校"
             :disabled="true"
           >
-            <el-option
+            <!-- <el-option
               v-for="item in options"
               :key="item.uuid"
               :label="item.unitName"
               :value="item.uuid"
             >
-            </el-option>
+            </el-option> -->
             <!-- <el-option label="宁波财经学院" value="shanghai"></el-option>
             <el-option label="浙江万里学院" value="beijing"></el-option>
             <el-option label="宁波大学" value="qq"></el-option> -->
@@ -85,6 +85,7 @@
               placeholder="选择日期"
               v-model="form.leaveStartTime"
               style="width: 100%"
+              @change="selectTime"
             ></el-date-picker>
           </el-col>
           <el-col class="line" :span="2">-</el-col>
@@ -121,6 +122,7 @@
 <script>
 import goOutApi from "../../api/goOut";
 import returnWorkApi from "../../api/returnWork";
+import loginApi from "../../api/login";
 export default {
   data() {
     return {
@@ -172,13 +174,14 @@ export default {
       this.getOutApplication();
       console.log("gai" + this.gai);
     }
+    this.getUserInfo();
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
     getUserInfo() {
-      returnWorkApi.getUserInfo().then((response) => {
+      loginApi.getUserInfo().then((response) => {
         this.form.userName = response.data.userInfo.userName;
         this.form.userId = response.data.userInfo.uuid;
         this.form.unitName = response.data.userInfo.unitName;
