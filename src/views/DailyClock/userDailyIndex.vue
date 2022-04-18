@@ -110,11 +110,12 @@
 
         <el-form-item class="btn">
           <el-button
-            v-show="gai == null && disabled == false"
+            v-show="gai == null && record == undefined"
             type="primary"
             @click="save"
             >立即创建</el-button
           >
+          <el-button v-show="record!=undefined">今天已完成打卡，无需重复打卡</el-button>
           <el-button v-show="gai == 1" type="primary" @click="modify"
             >修改完成</el-button
           >
@@ -145,6 +146,7 @@ export default {
         hasTested: null,
         isVaccination: null,
       },
+      record:"",
       recordId: "",
       gai: null,
       rules: {
@@ -170,11 +172,10 @@ export default {
     this.nowTimes();
   },
   activated() {
+    this.disabled = false
     console.log(this.$route.query.record);
-   
-    
-     setTimeout(() => {
-        if (this.$route.query.record != null) {
+   this.record=this.$route.query.record
+        if (this.$route.query.record != undefined) {
           this.form = this.$route.query.record;
           this.addressprovince =
             this.$route.query.record.currentLocation.split("-")[0];
@@ -185,8 +186,6 @@ export default {
           console.log("区：" + this.addressdist);
           this.disabled = true;
         }
-      }, 3000);
-    console.log(this.disabled);
 
     this.gai = this.$route.query.gai;
     console.log(this.recordId);

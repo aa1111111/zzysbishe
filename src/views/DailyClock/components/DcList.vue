@@ -113,6 +113,7 @@
         height="300"
         ref="table"
         :row-key="getRowKey"
+        @selection-change="handleSelectionChange"
         :header-cell-style="{ background: '#994a8e', color: 'white' }"
         style="width: 100%"
       >
@@ -181,12 +182,6 @@
           width="100"
           fixed
           align="center"
-          :filters="[
-            { text: '健康', value: '健康' },
-            { text: '已感染', value: '已感染' },
-          ]"
-          :filter-method="filterCon"
-          filter-placement="bottom-end"
         >
           <template slot-scope="scope">
             <el-tag
@@ -274,16 +269,15 @@ export default {
       });
     },
     handleModify(item,type) {
-      this.$refs.modifyDialog.openH(item,type);
+      this.$refs.modifyDialog.open(item,type);
     },
     handleReview(item) {
       this.$refs.reviewDialog.open(1, item);
     },
     reset() {
-      this.userName = "";
-      this.recordDate = "";
-      this.status = "";
-      this.healthCondition = "";
+      this.querySearch={
+
+      }
       this.getRecordDtoList();
     },
     deleteEmpType() {
@@ -302,7 +296,6 @@ export default {
           userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getRecordDtoList();
-            this.isSelected = false;
           });
         })
         .catch(() => {
@@ -325,7 +318,10 @@ export default {
       })
         .then(() => {
           //参数
+          debugger
+          console.log(this.ids)
           userDailyApi.checkHealthyRecord(this.ids).then((response) => {
+            debugger
             this.$message.success("审核成功");
             this.getRecordDtoList();
           });

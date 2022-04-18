@@ -14,30 +14,25 @@
         :model="form"
         label-width="120px"
         label-position="left"
-        :rules="rules"
       >
-        <el-form-item label="审核是否通过:" prop="branchCode">
+        <el-form-item label="审核是否通过:" prop="status">
           <el-select
             filterable
             clearable
             size="small"
-            v-model="form.branchCode"
+            v-model="form.status"
           >
-            <el-option
-              v-for="item in branchList"
-              :key="item.value"
-              :label="item.shName"
-              :value="item.shId"
-            />
+            <el-option label="通过" value="1"></el-option>
+            <el-option label="不通过" value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核不通过原因:" prop="reason">
+        <el-form-item label="审核不通过原因:" prop="msgBack">
           <el-input
             type="textarea"
             :autosize="{ minRows: 5, maxRows: 8 }"
             placeholder="请输入内容"
             style="width: 90%"
-            v-model="form.reason"
+            v-model="form.msgBack"
           >
           </el-input>
         </el-form-item>
@@ -54,62 +49,57 @@
   </div>
 </template>
 <script>
+import returnWorkApi from "../../../api/returnWork";
 export default {
   data() {
     return {
       manage:null,
       form: {
-        reason: "",
-        branchCode: "",
+        uuid:"",
+        status: "",
+        msgBack: "",
       },
-      rules: {
-        branchCode: [
-          { required: true, message: "请选择是否审核通过", trigger: "blur" },
-        ],
-      },
+      // rules: {
+      //   status: [
+      //     { required: true, message: "请选择是否审核通过", trigger: "change" },
+      //   ],
+      // },
       dialogFormVisible: false,
       branchList: [],
       id: "",
     };
   },
+      
+  activated() {
+  },
   methods: {
     open(item) {
-      this.id = item.id;
-      this.form.branchCode = item.shBranch;
+      this.form.status= "",
+    this.form.msgBack= ""
+      this.form.uuid = item.uuid;
       this.dialogFormVisible = true;
     },
     handleAdd() {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          let data = {
-            branchId: this.form.branchCode,
-            reason: this.form.reason,
-            id: this.id,
-            type: 1,
-          };
-
-          modShStatus(data).then((res) => {
-            if (res.code == 0) {
-              this.$message.success("审核完成");
-              this.$emit("refresh");
-              this.handleClose();
-            }
-          });
-        }
-      });
+      this.updateReturnApplication();
+      this.$emit("refresh");
+          this.handleClose();
+    },
+    updateReturnApplication() {
+      returnWorkApi
+        .updateReturnApplication(this.form)
+        .then((response) => {
+          if (response.code == 20000) {
+            this.$message.success("修改成功");
+          }else{
+            this.$message.warning(response.message);
+          }
+        });
     },
     handleClose() {
-      if (this.$refs["form"]) {
-        this.$refs["form"].resetFields();
-      }
       this.dialogFormVisible = false;
-      this.form = { reason: "", branchCode: "" };
-      this.id = "";
     },
   },
-    
-  mounted() {
-  },
+
 };
 </script>
 <style scoped>

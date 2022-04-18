@@ -16,7 +16,6 @@
         :model="form"
         label-width="120px"
         label-position="left"
-        :rules="rules"
       >
         <el-form-item label="审核是否通过:" prop="status">
           <el-select
@@ -105,11 +104,11 @@ export default {
         status: "",
         msgBack: "",
       },
-      rules: {
-        branchCode: [
-          { required: true, message: "请选择是否审核通过", trigger: "blur" },
-        ],
-      },
+      // rules: {
+      //   status: [
+      //     { required: true, message: "请选择是否审核通过", trigger: "change" },
+      //   ],
+      // },
       dialogFormVisible: false,
       branchList: [],
       form2: {
@@ -120,13 +119,20 @@ export default {
       id: "",
     };
   },
+    activated() {
+    
+  },
   methods: {
     openR(item,type) {
+      this.form.status= "",
+    this.form.msgBack= ""
       this.form.uuid = item.uuid;
       this.manage = type
       this.dialogFormVisible = true;
     },
     openG(item,type) {
+    this.form2.status= "",
+    this.form2.msgBack= ""
       this.form2.uuid = item.uuid;
       this.manage = type
       this.dialogFormVisible = true;
@@ -172,8 +178,7 @@ export default {
       });
     },
   },
-  mounted() {
-  },
+
 };
 </script>
 <style scoped>

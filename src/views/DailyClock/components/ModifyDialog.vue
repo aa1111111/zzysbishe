@@ -41,8 +41,8 @@
           </el-input>
         </el-form-item>
       </el-form> -->
-      <div class="form" style="padding-bottom: 10px">
-        {{ form.name }}
+      <div class="form" style="padding-bottom: 25px">
+        {{ form.userName }}
         <div style="float: left; padding-right: 20px">姓名：</div>
       </div>
       <el-form
@@ -165,8 +165,9 @@ export default {
       addressprovince: "",
       addresscity: "",
       addressdist: "",
-      disabled: "",
+      disabled: false,
       form: {
+        userName:"",
         currentLocation: "",
         isHealthy: null,
         hasTravelMediumHighRiskAreas: null,
@@ -201,17 +202,14 @@ export default {
     };
   },
   mounted() {
-    if (this.$route.query.record != null) {
       this.form = this.$route.query.record;
-      this.addressprovince =
-        this.$route.query.record.currentLocation.split("-")[0];
-      console.log("省：" + this.addressprovince);
-      this.addresscity = this.$route.query.record.currentLocation.split("-")[1];
-      console.log("市：" + this.addresscity);
-      this.addressdist = this.$route.query.record.currentLocation.split("-")[2];
-      console.log("区：" + this.addressdist);
-      this.disabled = "disabled";
-    }
+      // this.addressprovince =
+      //   this.$route.query.record.currentLocation.split("-")[0];
+      // console.log("省：" + this.addressprovince);
+      // this.addresscity = this.$route.query.record.currentLocation.split("-")[1];
+      // console.log("市：" + this.addresscity);
+      // this.addressdist = this.$route.query.record.currentLocation.split("-")[2];
+      // console.log("区：" + this.addressdist);
     this.getHealthyRecordInfo();
   },
   methods: {
@@ -225,6 +223,7 @@ export default {
     open(item) {
       this.currentLocation = item.currentLocation;
       this.form.isHealthy = item.isHealthy;
+      this.form.userName = item.userName;
       this.form.hasTravelMediumHighRiskAreas =
         item.hasTravelMediumHighRiskAreas;
       this.form.hasTravelAbroad = item.hasTravelAbroad;
