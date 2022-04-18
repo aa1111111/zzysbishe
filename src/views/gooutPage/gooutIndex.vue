@@ -85,6 +85,7 @@
               placeholder="选择日期"
               v-model="form.leaveStartTime"
               style="width: 100%"
+              value-format="yyyy-MM-dd"
               @change="selectTime"
             ></el-date-picker>
           </el-col>
@@ -95,6 +96,7 @@
               placeholder="选择时间"
               v-model="form.leaveEndTime"
               style="width: 100%"
+              value-format="yyyy-MM-dd"
               @change="selectTime"
             ></el-date-picker> </el-col
         ></el-form-item>

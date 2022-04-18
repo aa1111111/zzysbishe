@@ -66,6 +66,7 @@
             placeholder="选择日期"
             v-model="form.applyTime"
             style="width: 100%"
+            value-format="yyyy-MM-dd"
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="备注说明">

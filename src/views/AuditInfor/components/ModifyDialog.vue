@@ -92,6 +92,7 @@
               placeholder="选择日期"
               v-model="Fform.applyTime"
               style="width: 100%"
+              value-format="yyyy-MM-dd"
             ></el-date-picker>
           </el-form-item>
           <el-form-item label="备注说明">
@@ -173,6 +174,7 @@
                 v-model="Gform.leaveStartTime"
                 style="width: 100%"
                 @change="selectTime"
+                value-format="yyyy-MM-dd"
               ></el-date-picker>
             </el-col>
             <el-col class="line" :span="2">-</el-col>
@@ -183,6 +185,7 @@
                 v-model="Gform.leaveEndTime"
                 style="width: 100%"
                 @change="selectTime"
+                value-format="yyyy-MM-dd"
               ></el-date-picker> </el-col
           ></el-form-item>
           <el-form-item label="天数" prop="leaveDays">
@@ -254,6 +257,7 @@
               placeholder="选择日期"
               v-model="Hform.h5"
               style="width: 100%"
+              value-format="yyyy-MM-dd"
             ></el-date-picker>
           </el-form-item>
           <el-form-item label="备注说明" prop="h6">
