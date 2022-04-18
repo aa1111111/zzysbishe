@@ -61,7 +61,7 @@
               :disabled="true"
             ></el-input>
           </el-form-item>
-          <el-form-item label="公司/学校" prop="unitId">
+          <el-form-item label="公司/学校" prop="unitName">
             <el-select
               v-model="Fform.unitName"
               placeholder="请选择公司/学校"
@@ -128,7 +128,7 @@
           <el-form-item label="联系电话" prop="phone">
             <el-input v-model="Gform.phone" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="公司/学校" prop="region">
+          <el-form-item label="公司/学校" prop="unitName">
             <el-select
               v-model="Gform.unitName"
               placeholder="请选择公司/学校"
@@ -149,9 +149,10 @@
 
           <el-form-item label="请假类别" prop="leaveCategory">
             <el-select v-model="Gform.leaveCategory" placeholder="请选择">
-              <el-option label="事假" value="0"></el-option>
-              <el-option label="病假" value="1"></el-option>
-              <el-option label="公假" value="2"></el-option>
+              <!-- 这样加一个v-bind   value传的就是数字了要不然会是字符串 -->
+              <el-option label="事假" :value="0"></el-option>
+              <el-option label="病假" :value="1"></el-option>
+              <el-option label="公假" :value="2"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="目的地范围" prop="destinationArea">
@@ -222,7 +223,7 @@
           <el-form-item label="联系电话" prop="phone">
             <el-input v-model="Hform.phone"></el-input>
           </el-form-item>
-          <el-form-item label="公司/学校" prop="region">
+          <el-form-item label="公司/学校" prop="unitName">
             <el-select
               v-model="Hform.unitName"
               placeholder="请选择公司/学校"
@@ -287,6 +288,7 @@ export default {
         userName: "",
         phone: "",
         unitId: "",
+        unitName:"",
         number: "",
         applyTime: "",
         remark: "",
@@ -373,6 +375,7 @@ export default {
       // debugger
       this.Fform.uuid = item.uuid;
       this.Fform.userName = item.userName;
+      this.Fform.unitName = item.unitName;
       this.Fform.applyTime = item.applyTime;
       this.Fform.remark = item.remark;
       this.dialogFormVisible = true;
@@ -381,6 +384,7 @@ export default {
     openG(item) {
       this.Gform.uuid = item.uuid;
       this.Gform.userName = item.userName;
+      this.Gform.unitName = item.unitName;
       this.Gform.phone = item.phone;
       this.Gform.destination = item.realDestination;
       this.Gform.leaveCategory = item.leaveCategory;
@@ -393,6 +397,7 @@ export default {
     openH(item) {
       this.Hform.uuid = item.uuid;
       this.Hform.userName = item.userName;
+      this.Hform.unitName = item.unitName;
       this.Hform.recordTime = item.recordTime;
       this.Hform.healthCondition = item.healthCondition;
       this.dialogFormVisible = true;
@@ -437,6 +442,7 @@ export default {
         if (response.code == 20000) {
           this.Fform.number = response.data.application.number;
           this.Fform.phone = response.data.application.phone;
+          this.Fform.unitName = response.data.application.unitName;
           this.Fform.userId = response.data.application.userId;
           this.Fform.unitId = response.data.application.unitId;
         } else {
@@ -461,6 +467,7 @@ export default {
           this.Gform.number = response.data.application.number;
           this.Gform.userId = response.data.application.userId;
           this.Gform.unitId = response.data.application.unitId;
+          this.Gform.unitName = response.data.application.unitName;
           this.Gform.destinationArea = response.data.application.destinationArea;
           this.Gform.leaveEndTime = response.data.application.leaveEndTime;
           this.Gform.leaveDays = response.data.application.leaveDays;

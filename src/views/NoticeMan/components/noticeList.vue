@@ -71,7 +71,6 @@
           type="selection"
           width="50"
           fixed
-          :reserve-selection="true"
           align="center"
         >
         </el-table-column>

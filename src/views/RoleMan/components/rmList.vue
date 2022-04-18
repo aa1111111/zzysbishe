@@ -42,7 +42,6 @@
           type="selection"
           width="50"
           fixed
-          :reserve-selection="isSelected"
           align="center"
         >
         </el-table-column>
@@ -100,7 +99,6 @@ export default {
       tableData: [],
       multipleSelection: [],
       currentRow: null,
-      isSelected: true,
       ids: [],
     };
   },
@@ -140,7 +138,6 @@ export default {
           userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getHealthyRecordList();
-            this.isSelected = false;
           });
         })
         .catch(() => {

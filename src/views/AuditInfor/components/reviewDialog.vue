@@ -132,10 +132,14 @@ export default {
       this.dialogFormVisible = true;
     },
     handleAddR() {
-      this.updateReturnApplication()
+      this.updateReturnApplication();
+      this.$emit("refresh");
+          this.handleClose();
     },
     handleAddG() {
        this.updateOutApplication();
+       this.$emit("refresh");
+          this.handleClose();
       
     },
     handleClose() {
@@ -152,8 +156,6 @@ export default {
         .then((response) => {
           if (response.code == 20000) {
             this.$message.success("修改成功");
-            this.$emit("refresh");
-            this.handleClose();
           }else{
             this.$message.warning(response.message);
           }
@@ -164,8 +166,6 @@ export default {
       goOutApi.updateOutApplication(this.form2).then((response) => {
         if (response.code == 20000) {
           this.$message.success("修改成功");
-          this.$emit("refresh");
-          this.handleClose();
         }else{
           this.$message.warning(response.message);
         }

@@ -73,11 +73,11 @@
         </el-form-item>
 
         <el-form-item class="btn">
-          <el-button v-show="this.gai == null" type="primary" @click="save"
-            >立即创建</el-button
-          >
-          <el-button v-show="this.gai == 1" type="primary" @click="modify"
+          
+          <el-button v-if="gai == 1" type="primary" @click="modify"
             >修改完成</el-button
+          ><el-button v-else type="primary" @click="save"
+            >立即创建</el-button
           >
           <!-- <el-button>取消</el-button> -->
         </el-form-item>
@@ -118,14 +118,15 @@ export default {
     // this.getUserInfo();
     this.getUnitList();
   },
-  mounted() {
-    
+  activated() {
     this.gai = this.$route.query.gai;
     if (this.gai == 1) {
       this.form.uuid = this.$route.query.id;
       this.getReturnApplication();
       console.log("uuid" + this.uuid);
     }else{
+      this.form.applyTime="",
+      this.form.remark=""
       this.getUserInfo();
     }
     

@@ -97,7 +97,6 @@
           type="selection"
           width="50"
           fixed
-          :reserve-selection="true"
           align="center"
         >
         </el-table-column>
@@ -285,7 +284,7 @@ export default {
         .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate,this.userName)
         .then((response) => {
           console.log(response.data);
-          if (response.data.items.length > 0) {
+          if (response.code==20000) {
             this.tableData = response.data.items;
             this.currentPage = response.data.current;
             this.total = response.data.total;

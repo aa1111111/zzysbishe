@@ -110,12 +110,12 @@
 
         <el-form-item class="btn">
           <el-button
-            v-show="this.gai == null && this.disabled == false"
+            v-show="gai == null && disabled == false"
             type="primary"
             @click="save"
             >立即创建</el-button
           >
-          <el-button v-show="this.gai == 1" type="primary" @click="modify"
+          <el-button v-show="gai == 1" type="primary" @click="modify"
             >修改完成</el-button
           >
           <!-- <el-button>取消</el-button> -->
@@ -169,7 +169,7 @@ export default {
   created() {
     this.nowTimes();
   },
-  mounted() {
+  activated() {
     console.log(this.$route.query.record);
    
     

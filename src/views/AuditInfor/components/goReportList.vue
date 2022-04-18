@@ -107,7 +107,7 @@
         <el-table-column prop="phone" label="联系方式" fixed align="center">
         </el-table-column>
         <el-table-column
-          prop="destination"
+          prop="realDestination"
           label="外出地点"
           fixed
           align="center"
@@ -223,6 +223,7 @@ export default {
     // },
     deleteEmpType() {
       //批量删除的方法
+      debugger
       if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
         this.$message.info("请选择要删除的数据");
         return;
@@ -234,10 +235,9 @@ export default {
       })
         .then(() => {
           //参数
-          goOutApi.deleteReturnApplication(this.ids).then((response) => {
+          goOutApi.deleteOutApplication(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getOutApplicationList();
-            // this.isSelected = false;
           });
         })
         .catch(() => {

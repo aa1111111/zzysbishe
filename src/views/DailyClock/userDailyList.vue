@@ -81,7 +81,6 @@
           label="序号"
           width="50"
           fixed
-          :reserve-selection="isSelected"
           align="center"
         >
         </el-table-column>
@@ -171,7 +170,6 @@ export default {
       recordDate: "",
       multipleSelection: [],
       tableData: [],
-      isSelected: true,
       ids: [],
     };
   },
@@ -225,7 +223,6 @@ export default {
           userDailyApi.deleteHealthyRecord(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getHealthyRecordList();
-            this.isSelected = false;
           });
         })
         .catch(() => {

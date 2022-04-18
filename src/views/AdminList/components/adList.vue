@@ -91,7 +91,6 @@
           type="selection"
           width="50"
           fixed
-          :reserve-selection="true"
           align="center"
         >
         </el-table-column>
@@ -252,7 +251,6 @@ export default {
           adApi.deleteManager(this.ids).then((response) => {
             this.$message.success("删除成功");
             this.getManagerList();
-            this.isSelected=false
           });
         })
         .catch(() => {

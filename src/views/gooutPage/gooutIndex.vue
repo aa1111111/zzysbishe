@@ -63,9 +63,9 @@
         <p class="zs">外出信息</p>
         <el-form-item label="请假类别" prop="leaveCategory">
           <el-select v-model="form.leaveCategory" placeholder="请选择">
-            <el-option label="事假" value="0"></el-option>
-            <el-option label="病假" value="1"></el-option>
-            <el-option label="公假" value="2"></el-option>
+            <el-option label="事假" :value="0"></el-option>
+            <el-option label="病假" :value="1"></el-option>
+            <el-option label="公假" :value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="目的地范围" prop="destinationArea">
@@ -107,13 +107,13 @@
         </el-form-item>
 
         <el-form-item class="btn">
-          <el-button v-show="this.gai == null" type="primary" @click="save"
+          <el-button v-show="gai == null" type="primary" @click="save"
             >立即创建</el-button
           >
-          <el-button v-show="this.gai == 1" type="primary" @click="modify"
+          <el-button v-show="gai == 1" type="primary" @click="modify"
             >修改完成</el-button
           >
-          <el-button>取消</el-button>
+          <!-- <el-button>取消</el-button> -->
         </el-form-item>
       </el-form>
     </div>
@@ -167,12 +167,20 @@ export default {
   created() {
     this.getUserInfo();
   },
-  mounted() {
+  activated() {
     this.gai = this.$route.query.gai;
     if (this.gai == 1) {
       this.id = this.$route.query.id;
       this.getOutApplication();
       console.log("gai" + this.gai);
+    }else{
+      this.form.leaveCategory="",
+      this.form.destinationArea="",
+      this.form.destination="",
+      this.form.leaveStartTime="",
+      this.form.leaveEndTime="",
+      this.form.leaveDays="",
+      this.form.reason=""
     }
     this.getUserInfo();
   },
