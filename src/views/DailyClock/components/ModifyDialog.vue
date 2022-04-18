@@ -167,6 +167,7 @@ export default {
       addressdist: "",
       disabled: false,
       form: {
+        uuid:"",
         userName:"",
         currentLocation: "",
         isHealthy: null,
@@ -221,18 +222,20 @@ export default {
         this.addressprovince + "-" + this.addresscity + "-" + this.addressdist;
     },
     open(item) {
-      this.currentLocation = item.currentLocation;
-      this.form.isHealthy = item.isHealthy;
+      debugger
+       this.addressprovince =
+            item.currentLocation.split("-")[0];
+          this.addresscity =
+            item.currentLocation.split("-")[1];
+          this.addressdist =
+            item.currentLocation.split("-")[2];
+      this.form.uuid = item.uuid;
       this.form.userName = item.userName;
-      this.form.hasTravelMediumHighRiskAreas =
-        item.hasTravelMediumHighRiskAreas;
-      this.form.hasTravelAbroad = item.hasTravelAbroad;
-      this.form.contact = item.contact;
-      this.form.isolation = item.isolation;
-      this.form.infection = item.infection;
-      this.form.hasTested = item.hasTested;
-      this.form.isVaccination = item.isVaccination;
+      this.form.recordTime =
+        item.recordTime;
+      this.form.healthCondition = item.healthCondition;
       this.dialogFormVisible = true;
+      this.getHealthyRecordInfo();
     },
     handleAdd() {
       this.$refs["form"].validate((valid) => {
@@ -273,15 +276,17 @@ export default {
       }
     },
     getHealthyRecordInfo() {
-      userDailyApi.getHealthyRecordInfo(this.recordId).then((response) => {
+      userDailyApi.getHealthyRecordInfo(this.form.uuid).then((response) => {
         if (response.code == 20000) {
-          this.form = response.data.healthyRecord;
-          this.addressprovince =
-            response.data.healthyRecord.currentLocation.split("-")[0];
-          this.addresscity =
-            response.data.healthyRecord.currentLocation.split("-")[1];
-          this.addressdist =
-            response.data.healthyRecord.currentLocation.split("-")[2];
+          this.form.isHealthy=response.data.healthyRecord.isHealthy
+          this.form.hasTravelMediumHighRiskAreas=response.data.healthyRecord.hasTravelMediumHighRiskAreas
+          this.form.hasTravelAbroad=response.data.healthyRecord.hasTravelAbroad
+          this.form.contact=response.data.healthyRecord.contact
+          this.form.isolation=response.data.healthyRecord.isolation
+          this.form.infection=response.data.healthyRecord.infection
+          this.form.hasTested=response.data.healthyRecord.hasTested
+          this.form.isVaccination=response.data.healthyRecord.isVaccination
+
         }
       });
     },

@@ -198,7 +198,7 @@
             <!-- <el-button @click="handleCheck(scope.row)" type="text" size="small"
               >查看</el-button
             > -->
-            <el-button type="text" size="small" @click="handleModify(scope.row,1)"
+            <el-button type="text" size="small" @click="handleModify(scope.row)"
               >修改</el-button
             >
             <el-button type="text" size="small" v-if="scope.row.status == 0" @click="handleReview(scope.row)"
@@ -268,8 +268,8 @@ export default {
         return item.uuid;
       });
     },
-    handleModify(item,type) {
-      this.$refs.modifyDialog.open(item,type);
+    handleModify(item) {
+      this.$refs.modifyDialog.open(item);
     },
     handleReview(item) {
       this.$refs.reviewDialog.open(1, item);
