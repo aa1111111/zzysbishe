@@ -135,13 +135,12 @@
       </el-table>
     </div>
     <div class="block">
-      <el-pagination
-        layout="prev, pager, next"
-        :current-page="currentPage"
+    <el-pagination layout="prev, pager, next" 
+      :current-page="currentPage"
         :page-size="pageSize"
         :total="total"
-      >
-      </el-pagination>
+        @size-change="handleSizeChange"
+        @current-change="handleCurrrentChange" > </el-pagination>
     </div>
   </div>
 </template>
@@ -167,6 +166,13 @@ export default {
     this.getWorkApplicationList();
   },
   methods: {
+    handleCurrrentChange(val) {
+      this.currentPage=val
+      this.getWorkApplicationList()
+    },
+    handleSizeChange(val) {
+      console.log(`每页${val}条`)
+    },
     addEmpType() {
       this.$router.push({
         path: "returnIndex",

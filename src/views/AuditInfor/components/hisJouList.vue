@@ -154,13 +154,12 @@
       <add-dialog ref="addDialog" @refresh="search(1)"></add-dialog>
     </div>
     <div class="block">
-      <el-pagination
-        layout="prev, pager, next"
-        :current-page="currentPage"
+      <el-pagination layout="prev, pager, next" 
+      :current-page="currentPage"
         :page-size="pageSize"
         :total="total"
-      >
-      </el-pagination>
+        @size-change="handleSizeChange"
+        @current-change="handleCurrrentChange" > </el-pagination>
     </div>
   </div>
 </template>
@@ -194,6 +193,13 @@ export default {
     // handleCheck(item) {
     //   this.$refs.checkDialog.open(1, item);
     // },
+    handleCurrrentChange(val) {
+      this.currentPage=val
+      this.getHistoryJourney()
+    },
+    handleSizeChange(val) {
+      console.log(`每页${val}条`)
+    },
     handleModify(item) {
       this.$refs.modifyDialog.openH(1, item);
     },

@@ -196,7 +196,8 @@ export default {
     //   this.$refs.checkDialog.open(1, item);
     // },
     handleCurrrentChange(val) {
-      console.log(`当前页${val}`)
+      this.currentPage=val
+      this.getOutApplicationList()
     },
     handleReview(item,type) {
       this.$refs.reviewDialog.openG(item,type);

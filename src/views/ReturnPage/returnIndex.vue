@@ -126,6 +126,7 @@ export default {
       this.getReturnApplication();
       console.log("uuid" + this.uuid);
     }else{
+      this.form.uuid="",
       this.form.applyTime="",
       this.form.remark=""
       this.getUserInfo();

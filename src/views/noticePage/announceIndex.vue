@@ -10,9 +10,7 @@
     <div
       class="cardList"
       v-for="(item, index) in assessList"
-      :data="
-        assessList.slice((currentPage - 1) * pagesize, currentPage * pagesize)
-      "
+      :data=assessList
       :key="index"
     >
       <el-row :gutter="20" class="card">
@@ -37,14 +35,11 @@
       <el-divider></el-divider>
     </div>
     <div class="block">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="5"
-        layout="total, sizes, prev, pager, next, jumper"
+      <el-pagination layout="prev, pager, next" 
+      :current-page="currentPage"
+        :page-size="pageSize"
         :total="total"
-      ></el-pagination>
+        @current-change="handleCurrrentChange" > </el-pagination>
     </div>
   </div>
 </template>
@@ -54,25 +49,25 @@ export default {
   data() {
     return {
       currentPage: 1, //初始页
-      pagesize: 5, //    每页的数据
       assessList: [],
+      pageSize:5,
       total: 0,
       userType: null,
     };
   },
   methods: {
     // 初始页currentPage、初始每页数据数pagesize和数据data
-    handleSizeChange: function (size) {
-      this.pagesize = size; //当前显示页数
-      console.log(this.pagesize); //每页下拉显示数据
-    },
-    handleCurrentChange: function (currentPage) {
-      this.currentPage = currentPage; //第几页
-      console.log(this.currentPage); //点击第几页
+    // handleCurrentChange: function (currentPage) {
+    //   this.currentPage = currentPage; //第几页
+    //   console.log(this.currentPage); //点击第几页
+    // },
+    handleCurrrentChange(val) {
+      this.currentPage=val
+      this.getAnnouncementList()
     },
     getAnnouncementList() {
       noticeApi
-        .getAnnouncementList(this.currentPage, this.pagesize)
+        .getAnnouncementList(this.currentPage, this.pageSize)
         .then((response) => {
           if (response.code === 20000) {
             this.assessList = response.data.items;
@@ -80,7 +75,7 @@ export default {
             console.log("total=" + this.total);
           } else {
             this.$message.warning(response.message);
-            this.$router.push({ path: "login" });
+            // this.$router.push({ path: "login" });
           }
         });
     },

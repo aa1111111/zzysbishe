@@ -195,7 +195,8 @@ export default {
   },
   methods: {
     handleCurrrentChange(val) {
-      console.log(`当前页${val}`)
+      this.currentPage=val
+      this.getWorkApplicationList()
     },
     // handleCheck(item) {
     //   this.$refs.checkDialog.open(1, item);
