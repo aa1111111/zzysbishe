@@ -220,7 +220,7 @@ export default {
     },
     reset() {
       this.applyDate = "";
-      this.name = "";
+      this.userName = "";
       this.getWorkApplicationList();
     },
     // addEmpType() {

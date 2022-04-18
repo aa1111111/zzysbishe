@@ -56,7 +56,6 @@
         :model="form2"
         label-width="120px"
         label-position="left"
-        :rules="rules"
       >
         <el-form-item label="审核是否通过:" prop="status">
           <el-select

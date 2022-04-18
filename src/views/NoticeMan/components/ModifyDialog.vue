@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      title="修改"
+      :title="this.type == 1 ? '新增' : '修改'"
       width="600px"
       :visible.sync="dialogFormVisible"
       :before-close="handleClose"
@@ -15,7 +15,7 @@
         :rules="rules"
       >
         <el-form-item label="发布人" prop="name">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" disabled></el-input>
         </el-form-item>
         <el-form-item label="公告标题" prop="a">
           <el-input v-model="form.a"></el-input>
@@ -24,7 +24,7 @@
           <el-input v-model="form.b"></el-input>
         </el-form-item>
         <el-form-item label="公告内容" prop="c" class="nr">
-          <el-input v-model="form.c"></el-input>
+          <el-input type="textarea" :rows="4" v-model="form.c"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer" style="text-align: center">
@@ -67,6 +67,7 @@ export default {
       },
       dialogFormVisible: false,
       id: "",
+      type:""
     };
   },
   mounted() {},
@@ -76,8 +77,17 @@ export default {
       //   this.form.addresscity = data.city.value
       //   this.form.addressdist = data.area.value
     },
+    //新增传的type=1
+    openA(type) {
+      this.form={}
+      this.type = type;
+      this.dialogFormVisible = true;
+    },
+    //修改没穿type
     open(item) {
       this.id = item.id;
+      this.form.a = item.shBranch;
+      this.form.a = item.shBranch;
       this.form.a = item.shBranch;
       this.dialogFormVisible = true;
     },

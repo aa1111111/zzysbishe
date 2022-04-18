@@ -149,10 +149,10 @@ export default {
         // name: [{ required: true, message: "请输入", trigger: "blur" }],
         // phone: [{ required: true, message: "请输入", trigger: "blur" }],
         leaveCategory: [
-          { required: true, message: "请选择", trigger: "change" },
+          { required: true, message: "请选择", trigger: "blur", type: "array" },
         ],
         destinationArea: [
-          { required: true, message: "请选择", trigger: "change" },
+          { required: true, message: "请选择", trigger: "blur", type: "array" },
         ],
         destination: [{ required: true, message: "请输入", trigger: "blur" }],
         leaveStartTime: [
@@ -175,14 +175,14 @@ export default {
       this.id = this.$route.query.id;
       this.getOutApplication();
       console.log("gai" + this.gai);
-    }else{
-      this.form.leaveCategory="",
-      this.form.destinationArea="",
-      this.form.destination="",
-      this.form.leaveStartTime="",
-      this.form.leaveEndTime="",
-      this.form.leaveDays="",
-      this.form.reason=""
+    } else {
+      (this.form.leaveCategory = ""),
+        (this.form.destinationArea = ""),
+        (this.form.destination = ""),
+        (this.form.leaveStartTime = ""),
+        (this.form.leaveEndTime = ""),
+        (this.form.leaveDays = ""),
+        (this.form.reason = "");
     }
     this.getUserInfo();
   },
@@ -202,9 +202,7 @@ export default {
       });
     },
     save() {
-      this.$refs["form"].validate((valid) => {
-        this.addOutApplication();
-      });
+      this.addOutApplication();
     },
     modify() {
       this.$refs["form"].validate((valid) => {

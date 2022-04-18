@@ -26,7 +26,7 @@
               "
               size="small"
               class="btnh"
-              @click="search(1)"
+              @click="search()"
             >
               <i class="el-icon-search"></i>
               查询</el-button
@@ -38,7 +38,7 @@
     <div class="tool">
       <el-row>
         <el-button
-          @click="addEmpType"
+          @click="addEmpType(1)"
           class="btnh"
           style="
             background-color: #e2a0c9;
@@ -51,7 +51,11 @@
           新增
         </el-button>
 
-        <el-button @click="deleteEmpType" size="small">
+        <el-button
+          @click="deleteEmpType"
+          size="small"
+          :disabled="this.multipleSelection.length === 0"
+        >
           <i class="el-icon-delete"></i>
           删除
         </el-button>
@@ -64,6 +68,8 @@
         highlight-current-row
         height="300"
         ref="table"
+        :row-key="getRowKey"
+        @selection-change="handleSelectionChange"
         :header-cell-style="{ background: '#994a8e', color: 'white' }"
         style="width: 100%"
       >
@@ -109,9 +115,9 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
-            <el-button @click="handleCheck(scope.row)" type="text" size="small"
+            <!-- <el-button @click="handleCheck(scope.row)" type="text" size="small"
               >查看</el-button
-            >
+            > -->
             <el-button type="text" size="small" @click="handleModify(scope.row)"
               >编辑</el-button
             >
@@ -123,7 +129,14 @@
       <add-dialog ref="addDialog" @refresh="search(1)"></add-dialog>
     </div>
     <div class="block">
-      <el-pagination layout="prev, pager, next" :total="50"> </el-pagination>
+      <el-pagination
+        layout="prev, pager, next"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :total="total"
+        @current-change="handleCurrrentChange" 
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -131,10 +144,14 @@
 import AddDialog from "./addDialog.vue";
 import CheckDialog from "./checkDialog.vue";
 import ModifyDialog from "./ModifyDialog.vue";
+import returnWorkApi from "../../../api/returnWork";
 export default {
   components: { CheckDialog, ModifyDialog, AddDialog },
   data() {
     return {
+      pageSize: 10,
+      currentPage: 1,
+      total: 0,
       tableData: [
         {
           clockTime: "2021-09-27 11:13:33",
@@ -169,38 +186,86 @@ export default {
       searchQuery: {
         patName: "",
       },
+      multipleSelection: [],
+      ids: [],
     };
   },
+  created(){
+    this.getWorkApplicationList();
+  },
   methods: {
-    handleCheck(item) {
-      this.$refs.checkDialog.open(1, item);
+    handleCurrrentChange(val) {
+      console.log(`当前页${val}`)
+    },
+    // handleCheck(item) {
+    //   this.$refs.checkDialog.open(1, item);
+    // },
+    getRowKey(row) {
+      return row.id;
     },
     handleModify(item) {
-      this.$refs.modifyDialog.open(1, item);
+      this.$refs.modifyDialog.open(item);
     },
-    filterTag(value, row) {
-      return row.tag === value;
-    },
-    filterCon(value, row) {
-      return row.condition === value;
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      this.ids = this.multipleSelection.map((item) => {
+        return item.uuid;
+      });
     },
     reset() {
-      (this.searchQuery = {
-        idCard: "",
+      this.searchQuery = {
         patName: "",
-        clockCon: [],
-        bodyCon: [],
-      }),
-        (this.createDataRange = []);
-      this.modifyDataRange = [];
+      }
       this.search();
     },
-    addEmpType() {
-      this.$refs.addDialog.open(1);
+    addEmpType(type) {
+      this.$refs.modifyDialog.openA(type);
     },
     deleteEmpType() {
-      console.log(2);
+      //批量删除的方法
+      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
+        this.$message.info("请选择要删除的数据");
+        return;
+      }
+      this.$confirm("删除操作不可逆，是否继续 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //参数
+          returnWorkApi.deleteReturnApplication(this.ids).then((response) => {
+            this.$message.success("删除成功");
+            this.getWorkApplicationList();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
+    search() {
+      this.getWorkApplicationList();
+    },
+    // getWorkApplicationList() {
+    //   returnWorkApi
+    //     .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate,this.userName)
+    //     .then((response) => {
+    //       console.log(response.data);
+    //       if (response.code==20000) {
+    //         this.tableData = response.data.items;
+    //         this.currentPage = response.data.current;
+    //         this.total = response.data.total;
+    //         this.pageSize = response.data.size;
+    //       } else {
+    //         this.tableData = [];
+    //         this.$message.warning(response.message);
+    //         // this.$router.push({ path: "login" });
+    //       }
+    //     });
+    // },
   },
 };
 </script>
