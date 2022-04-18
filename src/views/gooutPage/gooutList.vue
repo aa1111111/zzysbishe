@@ -167,6 +167,7 @@ export default {
       currentPage: 1,
       total: 0,
       applyDate: "",
+      userName:"",
       multipleSelection: [],
       tableData: [],
     };
@@ -239,7 +240,7 @@ export default {
     },
     getOutApplicationList() {
       goOutApi
-        .getOutApplicationList(this.currentPage, this.pageSize, this.applyDate)
+        .getOutApplicationList(this.currentPage, this.pageSize, this.applyDate,this.userName)
         .then((response) => {
           console.log(response.data);
           if (response.code ==20000) {
