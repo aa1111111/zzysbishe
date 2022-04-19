@@ -217,6 +217,8 @@
         :current-page="currentPage"
         :page-size="pageSize"
         :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrrentChange"
       >
       </el-pagination>
     </div>
@@ -259,6 +261,13 @@ export default {
     // handleCheck(item) {
     //   this.$refs.checkDialog.open(1, item);
     // },
+    handleCurrrentChange(val) {
+      this.currentPage=val
+      this.getRecordDtoList()
+    },
+    handleSizeChange(val) {
+      console.log(`每页${val}条`)
+    },
     getRowKey(row) {
       return row.id;
     },
@@ -272,7 +281,7 @@ export default {
       this.$refs.modifyDialog.open(item);
     },
     handleReview(item) {
-      this.$refs.reviewDialog.open(1, item);
+      this.$refs.reviewDialog.open(item);
     },
     reset() {
       this.querySearch={
@@ -317,11 +326,9 @@ export default {
         type: "warning",
       })
         .then(() => {
-          //参数
-          debugger
+          //参数debugger
           console.log(this.ids)
           userDailyApi.checkHealthyRecord(this.ids).then((response) => {
-            debugger
             this.$message.success("审核成功");
             this.getRecordDtoList();
           });

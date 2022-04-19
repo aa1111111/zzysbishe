@@ -7,40 +7,6 @@
       :before-close="handleClose"
       class="minDialog"
     >
-      <!-- <el-form
-
-        ref="form"
-        :model="form"
-        label-width="120px"
-        label-position="left"
-        :rules="rules"
-      >
-        <el-form-item label="审核是否通过:" prop="branchCode">
-          <el-select
-            filterable
-            clearable
-            size="small"
-            v-model="form.branchCode"
-          >
-            <el-option
-              v-for="item in branchList"
-              :key="item.value"
-              :label="item.shName"
-              :value="item.shId"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审核不通过原因:" prop="reason">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 5, maxRows: 8 }"
-            placeholder="请输入内容"
-            style="width: 90%"
-            v-model="form.reason"
-          >
-          </el-input>
-        </el-form-item>
-      </el-form> -->
       <div class="form" style="padding-bottom: 25px">
         {{ form.userName }}
         <div style="float: left; padding-right: 20px">姓名：</div>
@@ -52,12 +18,15 @@
         label-width="120px"
         :rules="rules"
       >
+        <el-form-item v-show="false"
+          ><el-input v-model="form.uuid"></el-input
+        ></el-form-item>
         <el-form-item label="1.目前所在地区">
           <v-distpicker
             :disabled="disabled"
-            :province="form.addressprovince"
-            :city="form.addresscity"
-            :area="form.addressdist"
+            :province="addressprovince"
+            :city="addresscity"
+            :area="addressdist"
             @selected="onSelected"
           ></v-distpicker>
         </el-form-item>
@@ -167,17 +136,17 @@ export default {
       addressdist: "",
       disabled: false,
       form: {
-        uuid:"",
-        userName:"",
+        uuid: "",
+        userName: "",
         currentLocation: "",
-        isHealthy: null,
-        hasTravelMediumHighRiskAreas: null,
-        hasTravelAbroad: null,
-        contact: null,
-        isolation: null,
-        infection: null,
-        hasTested: null,
-        isVaccination: null,
+        isHealthy: "",
+        hasTravelMediumHighRiskAreas: "",
+        hasTravelAbroad: "",
+        contact: "",
+        isolation: "",
+        infection: "",
+        hasTested: "",
+        isVaccination: "",
       },
       recordId: "",
       gai: null,
@@ -203,15 +172,13 @@ export default {
     };
   },
   mounted() {
-      this.form = this.$route.query.record;
-      // this.addressprovince =
-      //   this.$route.query.record.currentLocation.split("-")[0];
-      // console.log("省：" + this.addressprovince);
-      // this.addresscity = this.$route.query.record.currentLocation.split("-")[1];
-      // console.log("市：" + this.addresscity);
-      // this.addressdist = this.$route.query.record.currentLocation.split("-")[2];
-      // console.log("区：" + this.addressdist);
-    this.getHealthyRecordInfo();
+    // this.addressprovince =
+    //   this.$route.query.record.currentLocation.split("-")[0];
+    // console.log("省：" + this.addressprovince);
+    // this.addresscity = this.$route.query.record.currentLocation.split("-")[1];
+    // console.log("市：" + this.addresscity);
+    // this.addressdist = this.$route.query.record.currentLocation.split("-")[2];
+    // console.log("区：" + this.addressdist);
   },
   methods: {
     onSelected(data) {
@@ -222,18 +189,11 @@ export default {
         this.addressprovince + "-" + this.addresscity + "-" + this.addressdist;
     },
     open(item) {
-      debugger
-       this.addressprovince =
-            item.currentLocation.split("-")[0];
-          this.addresscity =
-            item.currentLocation.split("-")[1];
-          this.addressdist =
-            item.currentLocation.split("-")[2];
-      this.form.uuid = item.uuid;
+      this.addressprovince = item.currentLocation.split("-")[0];
+      this.addresscity = item.currentLocation.split("-")[1];
+      this.addressdist = item.currentLocation.split("-")[2];
       this.form.userName = item.userName;
-      this.form.recordTime =
-        item.recordTime;
-      this.form.healthCondition = item.healthCondition;
+      this.form.uuid = item.uuid;
       this.dialogFormVisible = true;
       this.getHealthyRecordInfo();
     },
@@ -245,18 +205,6 @@ export default {
           this.handleClose();
         }
       });
-      //   this.$refs["form"].validate((valid) => {
-      //     if (valid) {
-      //       let data = this.form
-      //       modShStatus(data).then((res) => {
-      //         if (res.code == 0) {
-      //           this.$message.success("审核完成");
-      //           this.$emit("refresh");
-      //           this.handleClose();
-      //         }
-      //       });
-      //     }
-      //   });
     },
     addHealthyRecord() {
       if (this.form.currentLocation === null) {
@@ -278,15 +226,16 @@ export default {
     getHealthyRecordInfo() {
       userDailyApi.getHealthyRecordInfo(this.form.uuid).then((response) => {
         if (response.code == 20000) {
-          this.form.isHealthy=response.data.healthyRecord.isHealthy
-          this.form.hasTravelMediumHighRiskAreas=response.data.healthyRecord.hasTravelMediumHighRiskAreas
-          this.form.hasTravelAbroad=response.data.healthyRecord.hasTravelAbroad
-          this.form.contact=response.data.healthyRecord.contact
-          this.form.isolation=response.data.healthyRecord.isolation
-          this.form.infection=response.data.healthyRecord.infection
-          this.form.hasTested=response.data.healthyRecord.hasTested
-          this.form.isVaccination=response.data.healthyRecord.isVaccination
-
+          this.form = response.data.healthyRecord;
+          // this.form.hasTravelMediumHighRiskAreas =
+          //   response.data.healthyRecord.hasTravelMediumHighRiskAreas;
+          // this.form.hasTravelAbroad =
+          //   response.data.healthyRecord.hasTravelAbroad;
+          // this.form.contact = response.data.healthyRecord.contact;
+          // this.form.isolation = response.data.healthyRecord.isolation;
+          // this.form.infection = response.data.healthyRecord.infection;
+          // this.form.hasTested = response.data.healthyRecord.hasTested;
+          // this.form.isVaccination = response.data.healthyRecord.isVaccination;
         }
       });
     },

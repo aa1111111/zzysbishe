@@ -216,8 +216,7 @@ export default {
       });
     },
     reset() {
-      this.recordDate = "";
-      this.name = "";
+      this.userName = "";
       this.getHistoryJourney();
     },
     // addEmpType() {

@@ -58,7 +58,7 @@
           prop="hasTravelAbroad"
         >
           <el-radio-group v-model="form.hasTravelAbroad" :disabled="disabled"
-            >'
+            >
             <el-radio :label="0">否</el-radio>
             <el-radio :label="1">是</el-radio>
           </el-radio-group>
