@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog 
-    title="审核"
+    title="退回"
       width="600px"
       :visible.sync="dialogFormVisible"
       :before-close="handleClose"
@@ -15,7 +15,7 @@
         label-width="120px"
         label-position="left"
       >
-        <el-form-item label="审核是否通过:" prop="status">
+        <!-- <el-form-item label="审核是否通过:" prop="status">
           <el-select
             filterable
             clearable
@@ -25,8 +25,8 @@
             <el-option label="通过" value="1"></el-option>
             <el-option label="不通过" value="2"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="审核不通过原因:" prop="msgBack">
+        </el-form-item> -->
+        <el-form-item label="不通过原因:" prop="msgBack">
           <el-input
             type="textarea"
             :autosize="{ minRows: 5, maxRows: 8 }"
@@ -49,14 +49,14 @@
   </div>
 </template>
 <script>
-import returnWorkApi from "../../../api/returnWork";
+import userDailyApi from "../../../api/userDaily";
 export default {
   data() {
     return {
       manage:null,
       form: {
         uuid:"",
-        status: "",
+        status: 1,
         msgBack: "",
       },
       // rules: {
@@ -74,19 +74,18 @@ export default {
   },
   methods: {
     open(item) {
-      this.form.status= "",
-    this.form.msgBack= ""
+      this.form.msgBack= ""
       this.form.uuid = item.uuid;
       this.dialogFormVisible = true;
     },
     handleAdd() {
-      this.updateReturnApplication();
+      this.updateHealthyRecord();
       this.$emit("refresh");
-          this.handleClose();
+      this.handleClose();
     },
-    updateReturnApplication() {
-      returnWorkApi
-        .updateReturnApplication(this.form)
+    updateHealthyRecord() {
+      userDailyApi
+        .updateHealthyRecord(this.form)
         .then((response) => {
           if (response.code == 20000) {
             this.$message.success("修改成功");

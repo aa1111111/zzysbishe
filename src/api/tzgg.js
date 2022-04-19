@@ -4,29 +4,25 @@ import * as request from '@/utils/request'
  * 接口封装
  */
 export default {
-  getWorkApplicationList(page,limit,applyDate,userName) {
-    let url = `/zzysbishe/returnWorkApplication/getWorkApplicationList/`+page+`/`+limit+`?applyDate=`+applyDate+`&&userName=`+userName
+  getAnnouncementList(page,limit,announcementTitle) {
+    let url = `/zzysbishe/announcementRelease/getAnnouncementList/`+page+`/`+limit+`?announcementTitle=`+announcementTitle
     return request.get(url)
   },
-  addReturnApplication(returnApplication){
-    let url = `/zzysbishe/returnWorkApplication/addReturnApplication`
-    return request.post(url,returnApplication)
+  addAnnouncement(announcementVo){
+    let url = `/zzysbishe/announcementRelease/addAnnouncement`
+    return request.post(url,announcementVo)
   },
-  getReturnApplication(id){
-    let url = `/zzysbishe/returnWorkApplication/getReturnApplication/`+id
+  getAnnouncementInfo(announcementId){
+    let url = `/zzysbishe/announcementRelease/getAnnouncementInfo/`+announcementId
     return request.get(url)
   },
-  updateReturnApplication(returnApplication){
-    let url = `/zzysbishe/returnWorkApplication/updateReturnApplication`
-    return request.put(url,returnApplication)
+  updateAnnouncementInfo(announcementDto){
+    let url = `/zzysbishe/announcementRelease/updateAnnouncementInfo`
+    return request.put(url,announcementDto)
   },
-  deleteReturnApplication(uuids){
-    let url= `/zzysbishe/returnWorkApplication/deleteReturnApplication/`+uuids
+  deleteAnnouncement(uuids){
+    let url= `/zzysbishe/announcementRelease/deleteAnnouncement/`+uuids
     return request.remove(url)
   },
-  checkApplication(uuids){
-    let url= `/zzysbishe/returnWorkApplication/checkApplication/`+uuids
-    return request.get(url)
-  }
   
 }

@@ -363,6 +363,7 @@ export default {
     };
   },
   created() {
+    debugger
     // this.getUserInfo();
     // this.getUnitList();
   },

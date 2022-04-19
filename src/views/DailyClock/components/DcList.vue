@@ -63,7 +63,7 @@
           新增
         </el-button> -->
         <el-col :span="12">
-          <el-button
+          <!-- <el-button
             @click="auditEmpType"
             style="
               background-color: #e2a0c9;
@@ -74,7 +74,7 @@
           >
             <i class="el-icon-delete"></i>
             批量审核
-          </el-button>
+          </el-button> -->
           <el-button
             @click="deleteEmpType"
             size="small"
@@ -202,7 +202,7 @@
               >修改</el-button
             >
             <el-button type="text" size="small" v-if="scope.row.status == 0" @click="handleReview(scope.row)"
-              >审核</el-button
+              >退回</el-button
             >
           </template>
         </el-table-column>
@@ -314,32 +314,32 @@ export default {
           });
         });
     },
-    auditEmpType() {
-      //批量审核的方法
-      if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
-        this.$message.info("请选择要审核的数据");
-        return;
-      }
-      this.$confirm("批量审核操作不可逆，是否继续 ?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          //参数debugger
-          console.log(this.ids)
-          userDailyApi.checkHealthyRecord(this.ids).then((response) => {
-            this.$message.success("审核成功");
-            this.getRecordDtoList();
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消审核",
-          });
-        });
-    },
+    // auditEmpType() {
+    //   //批量审核的方法
+    //   if (this.multipleSelection == [] || this.multipleSelection.length == 0) {
+    //     this.$message.info("请选择要审核的数据");
+    //     return;
+    //   }
+    //   this.$confirm("批量审核操作不可逆，是否继续 ?", "提示", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "warning",
+    //   })
+    //     .then(() => {
+    //       //参数debugger
+    //       console.log(this.ids)
+    //       userDailyApi.checkHealthyRecord(this.ids).then((response) => {
+    //         this.$message.success("审核成功");
+    //         this.getRecordDtoList();
+    //       });
+    //     })
+    //     .catch(() => {
+    //       this.$message({
+    //         type: "info",
+    //         message: "已取消审核",
+    //       });
+    //     });
+    // },
     search() {
       this.getRecordDtoList();
     },

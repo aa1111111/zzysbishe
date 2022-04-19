@@ -124,7 +124,7 @@ export default {
   methods: {
     openR(item,type) {
       this.form.status= "",
-    this.form.msgBack= ""
+      this.form.msgBack= ""
       this.form.uuid = item.uuid;
       this.manage = type
       this.dialogFormVisible = true;

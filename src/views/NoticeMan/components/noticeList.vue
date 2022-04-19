@@ -6,7 +6,7 @@
           <div class="search-item">
             <span style="width: 100px">标题</span>
             <el-input
-              v-model="searchQuery.patName"
+              v-model="announcementTitle"
               size="small"
               placeholder="请输入"
             ></el-input>
@@ -89,7 +89,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="patName"
+          prop="userName"
           label="发布人"
           width="100"
           fixed
@@ -97,7 +97,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="tel"
+          prop="announcementTitle"
           label="公告标题"
           width="100"
           fixed
@@ -105,13 +105,13 @@
         >
         </el-table-column>
         <el-table-column
-          prop="patAddress"
+          prop="announcementContent"
           label="公告内容"
           fixed
           align="center"
         >
         </el-table-column>
-        <el-table-column prop="remark" label="发布时间" fixed align="center">
+        <el-table-column prop="releaseTime" label="发布时间" fixed align="center">
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="130" align="center">
           <template slot-scope="scope">
@@ -144,7 +144,7 @@
 import AddDialog from "./addDialog.vue";
 import CheckDialog from "./checkDialog.vue";
 import ModifyDialog from "./ModifyDialog.vue";
-import returnWorkApi from "../../../api/returnWork";
+import tzggApi from "../../../api/tzgg";
 export default {
   components: { CheckDialog, ModifyDialog, AddDialog },
   data() {
@@ -153,50 +153,20 @@ export default {
       currentPage: 1,
       total: 0,
       tableData: [
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "13435442668",
-          patName: "王小虎",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "562232333",
-          patName: "王小虎2",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "12223465",
-          patName: "王小虎3",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
-        {
-          clockTime: "2021-09-27 11:13:33",
-          tel: "1234567676",
-          patName: "王小虎4",
-          patAddress: "上海市普陀区金沙江路 1518 弄",
-          remark: "健康",
-        },
       ],
       currentRow: null,
-      searchQuery: {
-        patName: "",
-      },
+      announcementTitle:"",
       multipleSelection: [],
       ids: [],
     };
   },
   created(){
-    this.getWorkApplicationList();
+    this.getAnnouncementList();
   },
   methods: {
     handleCurrrentChange(val) {
       this.currentPage=val
-      this.getWorkApplicationList()
+      this.getAnnouncementList()
     },
     // handleCheck(item) {
     //   this.$refs.checkDialog.open(1, item);
@@ -235,9 +205,9 @@ export default {
       })
         .then(() => {
           //参数
-          returnWorkApi.deleteReturnApplication(this.ids).then((response) => {
+          tzggApi.deleteAnnouncement(this.ids).then((response) => {
             this.$message.success("删除成功");
-            this.getWorkApplicationList();
+            this.getAnnouncementList();
           });
         })
         .catch(() => {
@@ -248,25 +218,25 @@ export default {
         });
     },
     search() {
-      this.getWorkApplicationList();
+      this.getAnnouncementList();
     },
-    // getWorkApplicationList() {
-    //   returnWorkApi
-    //     .getWorkApplicationList(this.currentPage, this.pageSize, this.applyDate,this.userName)
-    //     .then((response) => {
-    //       console.log(response.data);
-    //       if (response.code==20000) {
-    //         this.tableData = response.data.items;
-    //         this.currentPage = response.data.current;
-    //         this.total = response.data.total;
-    //         this.pageSize = response.data.size;
-    //       } else {
-    //         this.tableData = [];
-    //         this.$message.warning(response.message);
-    //         // this.$router.push({ path: "login" });
-    //       }
-    //     });
-    // },
+    getAnnouncementList() {
+      tzggApi
+        .getAnnouncementList(this.currentPage, this.pageSize, this.announcementTitle)
+        .then((response) => {
+          console.log(response.data);
+          if (response.code==20000) {
+            this.tableData = response.data.items;
+            this.currentPage = response.data.current;
+            this.total = response.data.total;
+            this.pageSize = response.data.size;
+          } else {
+            this.tableData = [];
+            this.$message.warning(response.message);
+            // this.$router.push({ path: "login" });
+          }
+        });
+    },
   },
 };
 </script>
